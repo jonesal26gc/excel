@@ -17,8 +17,8 @@ public class ReadDepotsFromWorksheet {
         XSSFWorkbook workbook = new XSSFWorkbook(fis);
         XSSFSheet spreadsheet = workbook.getSheet("Depot Codes");
 
-        // Initialize locations array.
-        ArrayList<Location> locations = new ArrayList<Location>();
+        // Initialize oldLocations array.
+        ArrayList<OldLocation> oldLocations = new ArrayList<OldLocation>();
         HashMap<String, ArrayList<String>> depotCrossReference = new HashMap<String, ArrayList<String>>();
 
         // loop through all the rows until the end.
@@ -31,15 +31,15 @@ public class ReadDepotsFromWorksheet {
             }
 
             if ((int) currentRow.getCell(3).getNumericCellValue() <= 999) {
-                // Add location to the locations array.
+                // Add oldLocation to the oldLocations array.
                 ArrayList<LocationType> locationTypes = new ArrayList<LocationType>();
                 locationTypes.add(LocationType.DEPOT);
                 String depotNumber = Integer.toString((int) currentRow.getCell(3).getNumericCellValue());
-                Location location = new Location(depotNumber
+                OldLocation oldLocation = new OldLocation(depotNumber
                         , currentRow.getCell(2).getStringCellValue(),
                         locationTypes);
-                location.setFormat(currentRow.getCell(4).getStringCellValue());
-                locations.add(location);
+                oldLocation.setFormat(currentRow.getCell(4).getStringCellValue());
+                oldLocations.add(oldLocation);
             }
 
             if ((int) currentRow.getCell(3).getNumericCellValue() > 0) {
@@ -60,9 +60,9 @@ public class ReadDepotsFromWorksheet {
 
         fis.close();
 
-        // List the locations.
-        for (Location location : locations) {
-            System.out.println(location.toString());
+        // List the oldLocations.
+        for (OldLocation oldLocation : oldLocations) {
+            System.out.println(oldLocation.toString());
         }
 
         // List the cross-reference.

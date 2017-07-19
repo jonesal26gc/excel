@@ -17,8 +17,8 @@ public class ReadStoresFromWorksheet {
         XSSFWorkbook workbook = new XSSFWorkbook(fis);
         XSSFSheet spreadsheet = workbook.getSheet("Depot Name");
 
-        // Initialize locations array.
-        ArrayList<Location> locations = new ArrayList<Location>();
+        // Initialize oldLocations array.
+        ArrayList<OldLocation> oldLocations = new ArrayList<OldLocation>();
 
         // loop through all the rows until the end.
         for (int rowNumber = 1; rowNumber < spreadsheet.getLastRowNum(); rowNumber++) {
@@ -30,33 +30,33 @@ public class ReadStoresFromWorksheet {
             }
 
             if ((int) currentRow.getCell(1).getNumericCellValue() >= 1000) {
-                // Add location to the locations array.
+                // Add oldLocation to the oldLocations array.
                 ArrayList<LocationType> locationTypes = new ArrayList<LocationType>();
                 locationTypes.add(LocationType.STORE);
-                Location location = new Location(Integer.toString((int) currentRow.getCell(1).getNumericCellValue())
+                OldLocation oldLocation = new OldLocation(Integer.toString((int) currentRow.getCell(1).getNumericCellValue())
                         , currentRow.getCell(2).getStringCellValue(),
                         locationTypes);
-                retrievePostcodeFromRow(currentRow, location);
-                location.setFormat(currentRow.getCell(4).getStringCellValue());
-                location.setReportingRegion(currentRow.getCell(5).getStringCellValue());
-                location.setCounty(currentRow.getCell(6).getStringCellValue());
-                location.setCountry(currentRow.getCell(7).getStringCellValue());
-                locations.add(location);
-                System.out.println(location);
+                retrievePostcodeFromRow(currentRow, oldLocation);
+                oldLocation.setFormat(currentRow.getCell(4).getStringCellValue());
+                oldLocation.setReportingRegion(currentRow.getCell(5).getStringCellValue());
+                oldLocation.setCounty(currentRow.getCell(6).getStringCellValue());
+                oldLocation.setCountry(currentRow.getCell(7).getStringCellValue());
+                oldLocations.add(oldLocation);
+                System.out.println(oldLocation);
             }
         }
 
         fis.close();
 
-        // List the locations.
-        for (Location location : locations) {
-            System.out.println(location.toString());
+        // List the oldLocations.
+        for (OldLocation oldLocation : oldLocations) {
+            System.out.println(oldLocation.toString());
         }
     }
 
-    private static void retrievePostcodeFromRow(XSSFRow currentRow, Location location) {
+    private static void retrievePostcodeFromRow(XSSFRow currentRow, OldLocation oldLocation) {
         try {
-            location.setPostcode(currentRow.getCell(3).getStringCellValue());
+            oldLocation.setPostcode(currentRow.getCell(3).getStringCellValue());
         } catch (Exception ex) {
         }
 

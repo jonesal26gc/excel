@@ -1,159 +1,76 @@
 package ManiplateWorkbook;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Location {
-
-    private String locationId;
-    private String locationName;
-    private List<LocationType> locationTypes = new ArrayList<LocationType>();
-    private String postcode;
+    private String locationCode;
+    private String locationTypeCode;
+    private String name;
     private String format;
-    private String reportingRegion;
     private String county;
+    private String postcode;
     private String country;
+    private String reportingRegion;
 
-    public Location(){}
-
-    public Location(String locationId, String locationName, List<LocationType> locationType) {
-        this.locationId = locationId;
-        this.locationName = locationName;
-        this.locationTypes = locationType;
+    public Location(String locationCode, String locationTypeCode, String name, String format) {
+        this.locationCode = locationCode;
+        this.locationTypeCode = locationTypeCode;
+        this.name = name;
+        this.format = format;
     }
 
-    public String getLocationId() {
-        return locationId;
-    }
-
-    public void setLocationId(String locationId) {
-        this.locationId = locationId;
-    }
-
-    public String getLocationName() {
-        return locationName;
-    }
-
-    public void setLocationName(String locationName) {
-        this.locationName = locationName;
-    }
-
-    public List<LocationType> getLocationTypes() {
-        return locationTypes;
-    }
-
-    public void setLocationTypes(List<LocationType> locationType) {
-        this.locationTypes = locationType;
-    }
-
-    public void addLocationType(LocationType locationType){
-        this.locationTypes.add(locationType);
-    }
-
-    public String getPostcode() {
-        return postcode;
-    }
-
-    public void setPostcode(String postcode) {
+    public Location(String locationCode, String locationTypeCode, String name, String format, String county, String postcode, String country, String reportingRegion) {
+        this.locationCode = locationCode;
+        this.locationTypeCode = locationTypeCode;
+        this.name = name;
+        this.format = format;
+        this.county = county;
         this.postcode = postcode;
+        this.country = country;
+        this.reportingRegion = reportingRegion;
+    }
+
+    public String getLocationCode() {
+        return locationCode;
+    }
+
+    public String getLocationTypeCode() {
+        return locationTypeCode;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public String getFormat() {
         return format;
     }
 
-    public void setFormat(String format) {
-        this.format = format;
-    }
-
-    public String getReportingRegion() {
-        return reportingRegion;
-    }
-
-    public void setReportingRegion(String reportingRegion) {
-        this.reportingRegion = reportingRegion;
-    }
-
     public String getCounty() {
         return county;
     }
 
-    public void setCounty(String county) {
-        this.county = county;
+    public String getPostcode() {
+        return postcode;
     }
 
     public String getCountry() {
         return country;
     }
 
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        Location location = (Location) o;
-
-        if (locationId != null ? !locationId.equals(location.locationId)
-                : location.locationId != null) {
-            return false;
-        }
-        if (locationName != null ? !locationName.equals(location.locationName)
-                : location.locationName != null) {
-            return false;
-        }
-        if (locationTypes != null ? !locationTypes.equals(location.locationTypes)
-                : location.locationTypes != null) {
-            return false;
-        }
-        if (postcode != null ? !postcode.equals(location.postcode) : location.postcode != null) {
-            return false;
-        }
-        if (format != null ? !format.equals(location.format) : location.format != null) {
-            return false;
-        }
-        if (reportingRegion != null ? !reportingRegion.equals(location.reportingRegion)
-                : location.reportingRegion != null) {
-            return false;
-        }
-        if (county != null ? !county.equals(location.county) : location.county != null) {
-            return false;
-        }
-        return country != null ? country.equals(location.country) : location.country == null;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = locationId != null ? locationId.hashCode() : 0;
-        result = 31 * result + (locationName != null ? locationName.hashCode() : 0);
-        result = 31 * result + (locationTypes != null ? locationTypes.hashCode() : 0);
-        result = 31 * result + (postcode != null ? postcode.hashCode() : 0);
-        result = 31 * result + (format != null ? format.hashCode() : 0);
-        result = 31 * result + (reportingRegion != null ? reportingRegion.hashCode() : 0);
-        result = 31 * result + (county != null ? county.hashCode() : 0);
-        result = 31 * result + (country != null ? country.hashCode() : 0);
-        return result;
+    public String getReportingRegion() {
+        return reportingRegion;
     }
 
     @Override
     public String toString() {
         return "Location{" +
-                "locationId='" + locationId + '\'' +
-                ", locationName='" + locationName + '\'' +
-                ", locationTypes=" + locationTypes +
-                ", postcode='" + postcode + '\'' +
+                "locationCode='" + locationCode + '\'' +
+                ", locationTypeCode='" + locationTypeCode + '\'' +
+                ", name='" + name + '\'' +
                 ", format='" + format + '\'' +
-                ", reportingRegion='" + reportingRegion + '\'' +
                 ", county='" + county + '\'' +
+                ", postcode='" + postcode + '\'' +
                 ", country='" + country + '\'' +
+                ", reportingRegion='" + reportingRegion + '\'' +
                 '}';
     }
 }
-

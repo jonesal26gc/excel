@@ -93,4 +93,28 @@ public class ShippingBibleWorkbook {
         }
         return depotNumberList.toArray(new String[depotNumberList.size()]);
     }
+
+    public DepotLocationsList buildDepotLocationsList() {
+        DepotLocationsList depotLocationsList = new DepotLocationsList();
+        verifyLocationOfDepotNumberTableData();
+        for (int rowNumber = 2; rowNumber < depotCodesWorksheet.getLastRowNum(); rowNumber++) {
+            XSSFRow currentRow = depotCodesWorksheet.getRow(rowNumber);
+            if (currentRow == null) {
+                break;
+            }
+            String concatenatedDepotNumbers = retrieveConcatenatedDepotNumbers(currentRow);
+            if (concatenatedDepotNumbers.length() == 3) {
+                depotLocationsList.add(
+                        new Location(concatenatedDepotNumbers,
+                                "DEPOT",
+                                retrieveDepotName(currentRow),
+                                retrieveFormat(currentRow)));
+            }
+        }
+        return depotLocationsList;
+    }
+
+    private String retrieveFormat(XSSFRow currentRow) {
+        return currentRow.getCell(4).getStringCellValue();
+    }
 }

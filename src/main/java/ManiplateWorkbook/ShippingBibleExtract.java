@@ -5,10 +5,16 @@ public class ShippingBibleExtract {
         ShippingBibleWorkbook shippingBibleWorkbook = new ShippingBibleWorkbook("Transport Bible.xlsx");
         System.out.println("Bible Start Date is :" + shippingBibleWorkbook.getStartDate());
         System.out.println("Bible End Date is   :" + shippingBibleWorkbook.getEndDate());
+
         DepotCrossReference depotCrossReference = shippingBibleWorkbook.buildDepotCrossReference();
         depotCrossReference.display();
         for (String depot : depotCrossReference.lookup("Airberg")) {
             System.out.println(depot);
         }
+
+        DepotLocationsList depotLocationsList = shippingBibleWorkbook.buildDepotLocationsList();
+        System.out.println(depotLocationsList.locations.size() + " depots were loaded.");
+        depotLocationsList.display();
+        //StoreLocationsList storeLocationsList = shippingBibleWorkbook.buildStoreLocationsList();
     }
 }
