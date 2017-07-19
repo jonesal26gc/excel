@@ -117,4 +117,65 @@ public class ShippingBibleWorkbook {
     private String retrieveFormat(XSSFRow currentRow) {
         return currentRow.getCell(4).getStringCellValue();
     }
+
+    public StoreLocationsList buildStoreLocationsList() {
+        StoreLocationsList storeLocationsList = new StoreLocationsList();
+
+        for (int rowNumber = 1; rowNumber < depotNameWorksheet.getLastRowNum(); rowNumber++) {
+            XSSFRow currentRow = depotNameWorksheet.getRow(rowNumber);
+            if (currentRow == null | !isValidStoreNumber(currentRow)) {
+                break;
+            }
+            storeLocationsList.add(
+                    new Location(Integer.toString((int) currentRow.getCell(1).getNumericCellValue()),
+                            "STORE",
+                            retrieveStoreName(currentRow),
+                            retrieveStoreFormat(currentRow),
+                            retrieveStoreCounty(currentRow),
+                            retrieveStorePostcode(currentRow),
+                            retrieveStoreCountry(currentRow),
+                            retrieveStoreReportingRegion(currentRow)));
+        }
+        return storeLocationsList;
+    }
+
+    private boolean isValidStoreNumber(XSSFRow currentRow) {
+        try {
+            return (int) currentRow.getCell(1).getNumericCellValue() >= 1000;
+        } catch (Exception ex) {
+            return false;
+        }
+    }
+
+    private String retrieveStoreName(XSSFRow currentRow) {
+        return currentRow.getCell(2).getStringCellValue();
+    }
+
+    private String retrieveStoreFormat(XSSFRow currentRow) {
+        return currentRow.getCell(4).getStringCellValue();
+    }
+
+    private String retrieveStoreCounty(XSSFRow currentRow) {
+        return currentRow.getCell(6).getStringCellValue();
+    }
+
+    private String retrieveStorePostcode(XSSFRow currentRow) {
+        try {
+            return currentRow.getCell(3).getStringCellValue();
+        } catch (Exception e) {
+            try {
+                return Integer.toString((int) currentRow.getCell(3).getNumericCellValue());
+            } catch (Exception ex) {
+                return null;
+            }
+        }
+    }
+
+    private String retrieveStoreCountry(XSSFRow currentRow) {
+        return currentRow.getCell(7).getStringCellValue();
+    }
+
+    private String retrieveStoreReportingRegion(XSSFRow currentRow) {
+        return currentRow.getCell(5).getStringCellValue();
+    }
 }

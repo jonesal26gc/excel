@@ -28,4 +28,8 @@ public class DepotCrossReference {
     public String[] lookup(String s) {
         return depotCrossReference.get(s);
     }
+
+    public int displayCount() {
+        return depotCrossReference.size();
+    }
 }
