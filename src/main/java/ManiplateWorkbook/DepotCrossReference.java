@@ -24,5 +24,6 @@ public class DepotCrossReference {
 
     public ArrayList<String> lookup(String s) {
         return depotCrossReference.get(s);
+        Arrays.
     }
 }

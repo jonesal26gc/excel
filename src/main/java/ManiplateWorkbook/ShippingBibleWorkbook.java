@@ -12,63 +12,85 @@ import java.util.Date;
 public class ShippingBibleWorkbook {
     private FileInputStream fis;
     private XSSFWorkbook workbook;
-    private XSSFSheet depotNamesWorksheet;
+    private XSSFSheet depotNameWorksheet;
     private XSSFSheet depotCodesWorksheet;
-    private Date bibleStartDate;
-    private Date bibleEndDate;
+    private Date startDate;
+    private Date endDate;
+    private String filename;
 
 
-    public ShippingBibleWorkbook(String fileName) {
+    public ShippingBibleWorkbook(String filename) {
+        this.filename = filename;
         try {
-            this.fis = new FileInputStream(new File(fileName));
+            this.fis = new FileInputStream(new File(filename));
             this.workbook = new XSSFWorkbook(fis);
             this.depotCodesWorksheet = workbook.getSheet("Depot Codes");
-            this.depotNamesWorksheet = workbook.getSheet("Depot Name");
-            retrieveDateFromWorkbook();
+            this.depotNameWorksheet = workbook.getSheet("Depot Name");
+            retrieveEffectiveDatesFromWorkbook();
         } catch (Exception exception) {
             exception.printStackTrace();
         }
     }
 
-    public void retrieveDateFromWorkbook() {
-        XSSFRow currentRow = depotNamesWorksheet.getRow(1);
-        bibleStartDate = currentRow.getCell(33).getDateCellValue();
-        bibleEndDate = currentRow.getCell(34).getDateCellValue();
+    public void retrieveEffectiveDatesFromWorkbook() {
+        XSSFRow currentRow = depotNameWorksheet.getRow(1);
+        startDate = currentRow.getCell(33).getDateCellValue();
+        endDate = currentRow.getCell(34).getDateCellValue();
     }
 
-    public Date getBibleStartDate() {
-        return bibleStartDate;
+    public Date getStartDate() {
+        return startDate;
     }
 
-    public Date getBibleEndDate() {
-        return bibleEndDate;
+    public Date getEndDate() {
+        return endDate;
     }
 
-    public DepotCrossReference retrieveDepotCrossReference() {
+    public DepotCrossReference buildDepotCrossReference() {
         DepotCrossReference depotCrossReference = new DepotCrossReference();
-
-        // loop through all the rows until the end.
+        verifyLocationOfDepotNumberTableData();
         for (int rowNumber = 2; rowNumber < depotCodesWorksheet.getLastRowNum(); rowNumber++) {
             XSSFRow currentRow = depotCodesWorksheet.getRow(rowNumber);
-
-            // If there are no further rows, then terminate the processing.
-            if (currentRow == (null)) {
+            if (currentRow == null) {
                 break;
             }
-
-            // Create the cross-reference.
-            String concatenatedDepotNumbers = Integer.toString((int) currentRow.getCell(3).getNumericCellValue());
-            if (concatenatedDepotNumbers.length() < 3) {
-                concatenatedDepotNumbers = String.format("%03d", (int) currentRow.getCell(3).getNumericCellValue());
-            }
-            ArrayList<String> depotNumberList = new ArrayList<String>();
-            while (concatenatedDepotNumbers.length() > 0) {
-                depotNumberList.add(concatenatedDepotNumbers.substring(0, 3));
-                concatenatedDepotNumbers = concatenatedDepotNumbers.substring(3);
-            }
-            depotCrossReference.add(currentRow.getCell(2).getStringCellValue(), depotNumberList);
+            String depotName = retrieveDepotName(currentRow);
+            String concatenatedDepotNumbers = retrieveConcatenatedDepotNumbers(currentRow);
+            depotCrossReference.add(depotName, buildDepotNumberList(concatenatedDepotNumbers));
         }
-
         return depotCrossReference;
+    }
+
+    private void verifyLocationOfDepotNumberTableData() {
+        XSSFRow headerRow = depotCodesWorksheet.getRow(1);
+        if (!(headerRow.getCell(2).getStringCellValue().equals("Depot & Trunk Link")
+                && headerRow.getCell(3).getStringCellValue().equals("Whse Number")
+                && headerRow.getCell(4).getStringCellValue().equals("Stream"))) {
+            throw new RuntimeException("ERROR - The Depot Codes header record has not been located.");
+        }
+    }
+
+    private String retrieveDepotName(XSSFRow currentRow) {
+        return currentRow.getCell(2).getStringCellValue();
+    }
+
+    private String retrieveConcatenatedDepotNumbers(XSSFRow currentRow) {
+        String concatenatedDepotNumbers = Integer.toString((int) currentRow.getCell(3).getNumericCellValue());
+        if (concatenatedDepotNumbers.length() < 3) {
+            concatenatedDepotNumbers = String.format("%03d", (int) currentRow.getCell(3).getNumericCellValue());
+        }
+        if (!(concatenatedDepotNumbers.length() % 3 == 0)) {
+            throw new RuntimeException("ERROR - The concatenated depot number list is incorrectly formatted.");
+        }
+        return concatenatedDepotNumbers;
+    }
+
+    private ArrayList<String> buildDepotNumberList(String concatenatedDepotNumbers) {
+        ArrayList<String> depotNumberList = new ArrayList<String>();
+        while (concatenatedDepotNumbers.length() > 0) {
+            depotNumberList.add(concatenatedDepotNumbers.substring(0, 3));
+            concatenatedDepotNumbers = concatenatedDepotNumbers.substring(3);
+        }
+        return depotNumberList;
     }
 }
