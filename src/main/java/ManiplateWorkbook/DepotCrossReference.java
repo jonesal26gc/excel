@@ -11,7 +11,7 @@ public class DepotCrossReference {
         this.depotCrossReference = new HashMap<String, ArrayList<String>>();
     }
 
-    public void addEntry(String depotName, ArrayList<String> depotList){
+    public void add(String depotName, ArrayList<String> depotList){
         depotCrossReference.put(depotName,depotList);
     }
 
@@ -20,5 +20,9 @@ public class DepotCrossReference {
         for (Map.Entry<String, ArrayList<String>> entry : depotCrossReference.entrySet()) {
             System.out.println(entry.getKey() + " | " + entry.getValue().toString());
         }
+    }
+
+    public ArrayList<String> lookup(String s) {
+        return depotCrossReference.get(s);
     }
 }

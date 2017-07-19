@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Map;
 
 public class ShippingBibleWorkbook {
     private FileInputStream fis;
@@ -67,7 +66,7 @@ public class ShippingBibleWorkbook {
                 depotNumberList.add(concatenatedDepotNumbers.substring(0, 3));
                 concatenatedDepotNumbers = concatenatedDepotNumbers.substring(3);
             }
-            depotCrossReference.addEntry(currentRow.getCell(2).getStringCellValue(), depotNumberList);
+            depotCrossReference.add(currentRow.getCell(2).getStringCellValue(), depotNumberList);
         }
 
         return depotCrossReference;
