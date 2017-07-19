@@ -7,7 +7,8 @@ public class ShippingBibleExtract {
         System.out.println("Bible End Date is   :" + shippingBibleWorkbook.getEndDate());
         DepotCrossReference depotCrossReference = shippingBibleWorkbook.buildDepotCrossReference();
         depotCrossReference.display();
-        System.out.println(depotCrossReference.lookup("n/a"));
-
+        for (String depot : depotCrossReference.lookup("Airberg")) {
+            System.out.println(depot);
+        }
     }
 }

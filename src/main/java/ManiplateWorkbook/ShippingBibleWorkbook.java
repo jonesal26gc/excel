@@ -85,12 +85,12 @@ public class ShippingBibleWorkbook {
         return concatenatedDepotNumbers;
     }
 
-    private ArrayList<String> buildDepotNumberList(String concatenatedDepotNumbers) {
+    private String[] buildDepotNumberList(String concatenatedDepotNumbers) {
         ArrayList<String> depotNumberList = new ArrayList<String>();
         while (concatenatedDepotNumbers.length() > 0) {
             depotNumberList.add(concatenatedDepotNumbers.substring(0, 3));
             concatenatedDepotNumbers = concatenatedDepotNumbers.substring(3);
         }
-        return depotNumberList;
+        return depotNumberList.toArray(new String[depotNumberList.size()]);
     }
 }

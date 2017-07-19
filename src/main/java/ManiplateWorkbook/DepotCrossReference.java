@@ -1,29 +1,31 @@
 package ManiplateWorkbook;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class DepotCrossReference {
-    private HashMap<String, ArrayList<String>> depotCrossReference;
+    private HashMap<String, String[]> depotCrossReference;
 
     public DepotCrossReference() {
-        this.depotCrossReference = new HashMap<String, ArrayList<String>>();
+        this.depotCrossReference = new HashMap<String, String[]>();
     }
 
-    public void add(String depotName, ArrayList<String> depotList){
-        depotCrossReference.put(depotName,depotList);
+    public void add(String depotName, String[] depotList) {
+        depotCrossReference.put(depotName, depotList);
     }
 
     public void display() {
         // List the cross-reference.
-        for (Map.Entry<String, ArrayList<String>> entry : depotCrossReference.entrySet()) {
-            System.out.println(entry.getKey() + " | " + entry.getValue().toString());
+        for (Map.Entry<String, String[]> entry : depotCrossReference.entrySet()) {
+            System.out.print(entry.getKey() + " |");
+            for (String depot : entry.getValue()) {
+                System.out.print(" " + depot);
+            }
+            System.out.println();
         }
     }
 
-    public ArrayList<String> lookup(String s) {
+    public String[] lookup(String s) {
         return depotCrossReference.get(s);
-        Arrays.
     }
 }
