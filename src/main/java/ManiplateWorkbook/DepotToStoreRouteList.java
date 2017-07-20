@@ -1,8 +1,9 @@
 package ManiplateWorkbook;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class DepotToStoreRouteList {
+public class DepotToStoreRouteList implements Serializable {
     private String depot;
     private ArrayList<DepotToStoreRoute> depotToStoreRoutes = new ArrayList<DepotToStoreRoute>();
 
@@ -12,6 +13,10 @@ public class DepotToStoreRouteList {
 
     public String getDepot() {
         return depot;
+    }
+
+    public ArrayList<DepotToStoreRoute> getDepotToStoreRoutes() {
+        return depotToStoreRoutes;
     }
 
     public void add(DepotToStoreRoute depotToStoreRoute) {

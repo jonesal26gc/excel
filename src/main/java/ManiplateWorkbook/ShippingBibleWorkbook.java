@@ -235,7 +235,7 @@ public class ShippingBibleWorkbook {
         return dataRow.getCell(WORKSHEET_DEPOT_NAME_REPORTING_REGION_COLUMN).getStringCellValue();
     }
 
-    public DepotToStoreRouteList buildDepotToStoreRouteList(String targetDepot) {
+    public DepotToStoreRouteList buildDepotToStoreRouteList(String targetDepot, String routeTypeCode) {
         int targetDepotColumn = findTargetDepotColumn(targetDepot);
         if (targetDepotColumn == 0) {
             return null;
@@ -246,13 +246,14 @@ public class ShippingBibleWorkbook {
             if (currentRow == null | !isValidStoreNumber(currentRow)) {
                 break;
             }
-            DepotToStoreRoute depotToStoreRoute = new DepotToStoreRoute(
-                    depotToStoreRouteList.getDepot(),
-                    Integer.toString((int) currentRow.getCell(1).getNumericCellValue()),
-                    depotCrossReference.lookup(currentRow.getCell(targetDepotColumn).getStringCellValue()),
-                    retrieveBibleStartDate(currentRow),
-                    retrieveBibleEndDate(currentRow));
-            depotToStoreRouteList.add(depotToStoreRoute);
+            depotToStoreRouteList.add(
+                    new DepotToStoreRoute(
+                            depotToStoreRouteList.getDepot(),
+                            Integer.toString((int) currentRow.getCell(WORKSHEET_DEPOT_NAME_STORE_NUMBER_COLUMN).getNumericCellValue()),
+                            routeTypeCode,
+                            depotCrossReference.lookup(currentRow.getCell(targetDepotColumn).getStringCellValue()),
+                            retrieveBibleStartDate(currentRow),
+                            retrieveBibleEndDate(currentRow)));
         }
         return depotToStoreRouteList;
     }

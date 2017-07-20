@@ -1,0 +1,13 @@
+﻿﻿select *
+  from route r
+     , route_leg rl
+     , location f
+     , location t
+ where rl.route_number = r.route_number
+   and r.location_code_end = 2011
+   and r.route_type_code = 'FRONT'
+   and r.start_date <= '2017-03-21'
+   and r.end_date   >= '2017-03-21'
+   and f.location_code = rl.location_code_from
+   and t.location_code = rl.location_code_to
+   ;

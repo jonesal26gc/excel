@@ -1,6 +1,8 @@
 package ManiplateWorkbook;
 
-public class Location {
+import java.io.Serializable;
+
+public class Location implements Serializable {
     private String locationCode;
     private String locationTypeCode;
     private String name;

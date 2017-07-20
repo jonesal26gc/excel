@@ -1,8 +1,8 @@
 package ManiplateWorkbook;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 
 public class ShippingBibleExtract {
     public static void main(String[] args) {
@@ -19,11 +19,31 @@ public class ShippingBibleExtract {
         //storeLocationsList.display();
 
         // create the routes for each store.
-        ArrayList<DepotToStoreRouteList> depotLocationsLists = new ArrayList<DepotToStoreRouteList>();
-        depotLocationsLists.add(shippingBibleWorkbook.buildDepotToStoreRouteList("Daventry Clothing"));
-        depotLocationsLists.add(shippingBibleWorkbook.buildDepotToStoreRouteList("Chesterfield"));
-        for (DepotToStoreRouteList depotToStoreRouteList:depotLocationsLists){
+
+        DepotToStoreRouteListsList depotToStoreRouteListsList = new DepotToStoreRouteListsList();
+        depotToStoreRouteListsList.add(shippingBibleWorkbook.buildDepotToStoreRouteList("Daventry Clothing", "FRONT"));
+        depotToStoreRouteListsList.add(shippingBibleWorkbook.buildDepotToStoreRouteList("Chesterfield", "FRONT" ));
+        for (DepotToStoreRouteList depotToStoreRouteList : depotToStoreRouteListsList.getDepotToStoreRouteLists()) {
             depotToStoreRouteList.display();
         }
+
+        // Serialize the objects to a file.
+        try {
+            FileOutputStream fileOut = new FileOutputStream("ShippingBibleExtract.ser");
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            System.out.println("Saving Depot locations to serialized file.");
+            out.writeObject(depotLocationsList);
+            System.out.println("Saving Store locations to serialized file.");
+            out.writeObject(storeLocationsList);
+            System.out.println("Saving Route Lists to serialized file.");
+            out.writeObject(depotToStoreRouteListsList);
+            out.close();
+            fileOut.close();
+            System.out.printf("Serialized data is saved in ShippingBibleExtract.ser");
+        } catch (IOException i) {
+            i.printStackTrace();
+        }
+
+
     }
 }

@@ -1,8 +1,9 @@
 package ManiplateWorkbook;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class StoreLocationsList {
+public class StoreLocationsList implements Serializable {
     ArrayList<Location> locations = new ArrayList<Location>();
 
     public StoreLocationsList() {
@@ -10,6 +11,10 @@ public class StoreLocationsList {
 
     public void add(Location store) {
         locations.add(store);
+    }
+
+    public ArrayList<Location> getLocations() {
+        return locations;
     }
 
     public void display() {
