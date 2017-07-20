@@ -25,5 +25,7 @@ public class ShippingBibleExtract {
         //storeLocationsList.display();
 
         // create the routes for each store.
+        DepotToStoreRouteList depotToStoreRouteList = shippingBibleWorkbook.buildDepotToStoreRouteList(depotCrossReference,"Daventry Clothing");
+        depotToStoreRouteList.display();
     }
 }

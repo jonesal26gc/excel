@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class ShippingBibleWorkbook {
+    public static final int NATIONAL_DEPOT_COLUMN_START = 10;
+    public static final int NATIONAL_DEPOT_COLUMN_END = 18;
     private FileInputStream fis;
     private XSSFWorkbook workbook;
     private XSSFSheet depotNameWorksheet;
@@ -27,6 +29,7 @@ public class ShippingBibleWorkbook {
             this.depotCodesWorksheet = workbook.getSheet("Depot Codes");
             this.depotNameWorksheet = workbook.getSheet("Depot Name");
             retrieveEffectiveDatesFromWorkbook();
+            this.filename = filename;
         } catch (Exception exception) {
             exception.printStackTrace();
         }
@@ -177,5 +180,37 @@ public class ShippingBibleWorkbook {
 
     private String retrieveStoreReportingRegion(XSSFRow currentRow) {
         return currentRow.getCell(5).getStringCellValue();
+    }
+
+    public DepotToStoreRouteList buildDepotToStoreRouteList(DepotCrossReference depotCrossReference, String targetDepot) {
+        int targetDepotColumn = findTargetDepotColumn(targetDepot);
+        if (targetDepotColumn == 0) {
+            return null;
+        }
+        DepotToStoreRouteList depotToStoreRouteList = new DepotToStoreRouteList(depotCrossReference.lookup(targetDepot)[0]);
+        for (int rowNumber = 1; rowNumber < depotNameWorksheet.getLastRowNum(); rowNumber++) {
+            XSSFRow currentRow = depotNameWorksheet.getRow(rowNumber);
+            if (currentRow == null | !isValidStoreNumber(currentRow)) {
+                break;
+            }
+            DepotToStoreRoute depotToStoreRoute = new DepotToStoreRoute(
+                    depotToStoreRouteList.getDepot(),
+                    Integer.toString((int) currentRow.getCell(1).getNumericCellValue()),
+                    depotCrossReference.lookup(currentRow.getCell(targetDepotColumn).getStringCellValue()),
+                    startDate,
+                    endDate);
+            depotToStoreRouteList.add(depotToStoreRoute);
+        }
+        return depotToStoreRouteList;
+    }
+
+    private int findTargetDepotColumn(String targetDepot) {
+        XSSFRow headingsRow = depotNameWorksheet.getRow(0);
+        for (int headingsColumn = NATIONAL_DEPOT_COLUMN_START; headingsColumn <= NATIONAL_DEPOT_COLUMN_END; headingsColumn++) {
+            if (headingsRow.getCell(headingsColumn).getStringCellValue().equals(targetDepot)) {
+                return headingsColumn;
+            }
+        }
+        return 0;
     }
 }
