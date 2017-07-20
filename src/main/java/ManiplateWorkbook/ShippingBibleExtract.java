@@ -1,18 +1,12 @@
 package ManiplateWorkbook;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+
 public class ShippingBibleExtract {
     public static void main(String[] args) {
         ShippingBibleWorkbook shippingBibleWorkbook = new ShippingBibleWorkbook("Transport Bible.xlsx");
-        System.out.println("Bible Start Date is :" + shippingBibleWorkbook.getStartDate());
-        System.out.println("Bible End Date is   :" + shippingBibleWorkbook.getEndDate());
-
-        // load the depot cross-reference.
-        DepotCrossReference depotCrossReference = shippingBibleWorkbook.buildDepotCrossReference();
-        System.out.println(depotCrossReference.displayCount() + " depots were loaded to the cross-reference.");
-//        depotCrossReference.display();
-//        for (String depot : depotCrossReference.lookup("Airberg")) {
-//            System.out.println(depot);
-//        }
 
         // load the depot list.
         DepotLocationsList depotLocationsList = shippingBibleWorkbook.buildDepotLocationsList();
@@ -25,7 +19,11 @@ public class ShippingBibleExtract {
         //storeLocationsList.display();
 
         // create the routes for each store.
-        DepotToStoreRouteList depotToStoreRouteList = shippingBibleWorkbook.buildDepotToStoreRouteList(depotCrossReference,"Daventry Clothing");
-        depotToStoreRouteList.display();
+        ArrayList<DepotToStoreRouteList> depotLocationsLists = new ArrayList<DepotToStoreRouteList>();
+        depotLocationsLists.add(shippingBibleWorkbook.buildDepotToStoreRouteList("Daventry Clothing"));
+        depotLocationsLists.add(shippingBibleWorkbook.buildDepotToStoreRouteList("Chesterfield"));
+        for (DepotToStoreRouteList depotToStoreRouteList:depotLocationsLists){
+            depotToStoreRouteList.display();
+        }
     }
 }

@@ -19,7 +19,6 @@ public class DepotToStoreRouteList {
     }
 
     public void display() {
-        System.out.println(depot);
         for (DepotToStoreRoute depotToStoreRoute:depotToStoreRoutes){
             System.out.println(depotToStoreRoute.toString());
         }
