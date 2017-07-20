@@ -19,13 +19,13 @@ public class ShippingBibleExtract {
         //storeLocationsList.display();
 
         // create the routes for each store.
-
         DepotToStoreRouteListsList depotToStoreRouteListsList = new DepotToStoreRouteListsList();
         depotToStoreRouteListsList.add(shippingBibleWorkbook.buildDepotToStoreRouteList("Daventry Clothing", "FRONT"));
         depotToStoreRouteListsList.add(shippingBibleWorkbook.buildDepotToStoreRouteList("Chesterfield", "FRONT" ));
-        for (DepotToStoreRouteList depotToStoreRouteList : depotToStoreRouteListsList.getDepotToStoreRouteLists()) {
-            depotToStoreRouteList.display();
-        }
+        System.out.println(depotToStoreRouteListsList.getDepotToStoreRouteLists().size() + " depots were routed.");
+//        for (DepotToStoreRouteList depotToStoreRouteList : depotToStoreRouteListsList.getDepotToStoreRouteLists()) {
+//            depotToStoreRouteList.display();
+//        }
 
         // Serialize the objects to a file.
         try {
@@ -43,7 +43,5 @@ public class ShippingBibleExtract {
         } catch (IOException i) {
             i.printStackTrace();
         }
-
-
     }
 }

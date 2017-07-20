@@ -29,76 +29,104 @@ public class ShippingBibleInsertSQL {
             return;
         }
 
-        //printWriter.println(depotToStoreRouteListsList.getDepotToStoreRouteLists().size() + " route lists were found.");
+        processStoreLocations(storeLocationsList, printWriter);
+        processDepotLocations(depotLocationsList, printWriter);
+        processRoutes(depotToStoreRouteListsList, printWriter);
+    }
 
+    private static void processStoreLocations(StoreLocationsList storeLocationsList, PrintWriter printWriter) {
         for (Location location : storeLocationsList.getLocations()) {
-            printWriter.println("insert into location " +
-                    "(location_code,location_type_code,name,format,county,postcode,country,reporting_region) " +
-                    "values (" + location.getLocationCode() +
-                    ",'" + location.getLocationTypeCode() + "'"+
-                    ",'" + location.getName().replaceAll("'","") + "'"+
-                    ",'" + location.getFormat() + "'"+
-                    ",'" + location.getCounty() + "'"+
-                    ",'" + location.getPostcode() + "'"+
-                    ",'" + location.getCountry() + "'"+
-                    ",'" + location.getReportingRegion() + "');");
+            createSQLforStoreLocation(printWriter, location);
         }
+    }
 
+    private static void processDepotLocations(DepotLocationsList depotLocationsList, PrintWriter printWriter) {
         for (Location location : depotLocationsList.getLocations()) {
-            printWriter.println("insert into location " +
-                    "(location_code,location_type_code,name,format) " +
-                    "values (" + location.getLocationCode() +
-                    ",'" + location.getLocationTypeCode() + "'"+
-                    ",'" + location.getName() + "'"+
-                    ",'" + location.getFormat() + "');");
+            createSQLforDepotLocations(printWriter, location);
         }
+    }
 
+    private static void processRoutes(DepotToStoreRouteListsList depotToStoreRouteListsList, PrintWriter printWriter) {
         DateFormat isoDate = new SimpleDateFormat("yyyy-MM-dd");
         int routeNumber = 0;
         for (DepotToStoreRouteList depotToStoreRouteList : depotToStoreRouteListsList.getDepotToStoreRouteLists()) {
             for (DepotToStoreRoute depotToStoreRoute : depotToStoreRouteList.getDepotToStoreRoutes()) {
                 routeNumber++;
-                printWriter.println("insert into route " +
-                        "(route_number, location_code_start, location_code_end, route_type_code, start_date, end_date) " +
-                        "values (" + String.valueOf(routeNumber) +
-                        "," + depotToStoreRoute.getDepot() +
-                        "," + depotToStoreRoute.getStore() +
-                        ",'" + depotToStoreRoute.getRouteTypeCode() + "'" +
-                        ",'" + isoDate.format(depotToStoreRoute.getStartDate()) + "'" +
-                        ",'" + isoDate.format(depotToStoreRoute.getEndDate()) + "'" +
-                        ");");
+                createSQLforRoute(printWriter, isoDate, routeNumber, depotToStoreRoute);
                 if (depotToStoreRoute.getDepotList() == null) {
-                    printWriter.println("insert into route_leg " +
-                            "(route_number, leg_number, location_code_from, location_code_to) " +
-                            "values (" + String.valueOf(routeNumber) +
-                            ",1" +
-                            "," + depotToStoreRoute.getDepot() +
-                            "," + depotToStoreRoute.getStore() +
-                            ");");
+                    createSQLforNonTrunkedRouteLeg(printWriter, routeNumber, depotToStoreRoute);
                 } else {
-                    int legNumber = 0;
-                    String fromDepot = depotToStoreRoute.getDepot();
-                    for (String depot : depotToStoreRoute.getDepotList()) {
-                        legNumber++;
-                        printWriter.println("insert into route_leg " +
-                                "(route_number, leg_number, location_code_from, location_code_to) " +
-                                "values (" + String.valueOf(routeNumber) +
-                                "," + String.valueOf(legNumber) +
-                                "," + fromDepot +
-                                "," + depotToStoreRoute.getDepotList()[legNumber - 1] +
-                                ");");
-                        fromDepot = depotToStoreRoute.getDepotList()[legNumber - 1];
-                    }
-                    legNumber++;
-                    printWriter.println("insert into route_leg " +
-                            "(route_number, leg_number, location_code_from, location_code_to) " +
-                            "values (" + String.valueOf(routeNumber) +
-                            "," + String.valueOf(legNumber) +
-                            "," + fromDepot +
-                            "," + depotToStoreRoute.getStore() +
-                            ");");
+                    createSQLforTrunkedRouteLeg(printWriter, routeNumber, depotToStoreRoute);
                 }
             }
         }
+    }
+
+    private static void createSQLforStoreLocation(PrintWriter printWriter, Location location) {
+        printWriter.println("insert into location " +
+                "(location_code,location_type_code,name,format,county,postcode,country,reporting_region) " +
+                "values (" + location.getLocationCode() +
+                ",'" + location.getLocationTypeCode() + "'" +
+                ",'" + location.getName().replaceAll("'", "") + "'" +
+                ",'" + location.getFormat() + "'" +
+                ",'" + location.getCounty() + "'" +
+                ",'" + location.getPostcode() + "'" +
+                ",'" + location.getCountry() + "'" +
+                ",'" + location.getReportingRegion() + "');");
+    }
+
+    private static void createSQLforDepotLocations(PrintWriter printWriter, Location location) {
+        printWriter.println("insert into location " +
+                "(location_code,location_type_code,name,format) " +
+                "values (" + location.getLocationCode() +
+                ",'" + location.getLocationTypeCode() + "'" +
+                ",'" + location.getName() + "'" +
+                ",'" + location.getFormat() + "');");
+    }
+
+    private static void createSQLforRoute(PrintWriter printWriter, DateFormat isoDate, int routeNumber, DepotToStoreRoute depotToStoreRoute) {
+        printWriter.println("insert into route " +
+                "(route_number, location_code_start, location_code_end, route_type_code, start_date, end_date) " +
+                "values (" + String.valueOf(routeNumber) +
+                "," + depotToStoreRoute.getDepot() +
+                "," + depotToStoreRoute.getStore() +
+                ",'" + depotToStoreRoute.getRouteTypeCode() + "'" +
+                ",'" + isoDate.format(depotToStoreRoute.getStartDate()) + "'" +
+                ",'" + isoDate.format(depotToStoreRoute.getEndDate()) + "'" +
+                ");");
+    }
+
+    private static void createSQLforNonTrunkedRouteLeg(PrintWriter printWriter, int routeNumber, DepotToStoreRoute depotToStoreRoute) {
+        printWriter.println("insert into route_leg " +
+                "(route_number, leg_number, location_code_from, location_code_to) " +
+                "values (" + String.valueOf(routeNumber) +
+                ",1" +
+                "," + depotToStoreRoute.getDepot() +
+                "," + depotToStoreRoute.getStore() +
+                ");");
+    }
+
+    private static void createSQLforTrunkedRouteLeg(PrintWriter printWriter, int routeNumber, DepotToStoreRoute depotToStoreRoute) {
+        int legNumber = 0;
+        String fromDepot = depotToStoreRoute.getDepot();
+        for (String depot : depotToStoreRoute.getDepotList()) {
+            legNumber++;
+            printWriter.println("insert into route_leg " +
+                    "(route_number, leg_number, location_code_from, location_code_to) " +
+                    "values (" + String.valueOf(routeNumber) +
+                    "," + String.valueOf(legNumber) +
+                    "," + fromDepot +
+                    "," + depot +
+                    ");");
+            fromDepot = depot;
+        }
+        legNumber++;
+        printWriter.println("insert into route_leg " +
+                "(route_number, leg_number, location_code_from, location_code_to) " +
+                "values (" + String.valueOf(routeNumber) +
+                "," + String.valueOf(legNumber) +
+                "," + fromDepot +
+                "," + depotToStoreRoute.getStore() +
+                ");");
     }
 }
