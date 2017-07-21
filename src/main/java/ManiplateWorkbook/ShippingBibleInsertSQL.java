@@ -10,7 +10,7 @@ public class ShippingBibleInsertSQL {
     public static void main(String[] args) throws Exception {
         DepotLocationsList depotLocationsList;
         StoreLocationsList storeLocationsList;
-        DepotToStoreRouteListsList depotToStoreRouteListsList;
+        RouteListsList routeListsList;
 
         File file = new File("ShippingNetworkInsertSQL.txt");
         FileWriter fileWriter = new FileWriter(file);
@@ -21,7 +21,7 @@ public class ShippingBibleInsertSQL {
             ObjectInputStream in = new ObjectInputStream(fileIn);
             depotLocationsList = (DepotLocationsList) in.readObject();
             storeLocationsList = (StoreLocationsList) in.readObject();
-            depotToStoreRouteListsList = (DepotToStoreRouteListsList) in.readObject();
+            routeListsList = (RouteListsList) in.readObject();
             in.close();
             fileIn.close();
         } catch (IOException i) {
@@ -35,7 +35,7 @@ public class ShippingBibleInsertSQL {
 
         processStoreLocations(storeLocationsList, bufferedWriter);
         processDepotLocations(depotLocationsList, bufferedWriter);
-        processRoutes(depotToStoreRouteListsList, bufferedWriter);
+        processRoutes(routeListsList, bufferedWriter);
 
         System.out.println("SQL generation is complete.");
     }
@@ -52,17 +52,15 @@ public class ShippingBibleInsertSQL {
         }
     }
 
-    private static void processRoutes(DepotToStoreRouteListsList depotToStoreRouteListsList, BufferedWriter bufferedWriter) {
+    private static void processRoutes(RouteListsList routeListsList, BufferedWriter bufferedWriter) {
         DateFormat isoDate = new SimpleDateFormat("yyyy-MM-dd");
         int routeNumber = 0;
-        for (DepotToStoreRouteList depotToStoreRouteList : depotToStoreRouteListsList.getDepotToStoreRouteLists()) {
-            for (DepotToStoreRoute depotToStoreRoute : depotToStoreRouteList.getDepotToStoreRoutes()) {
+        for (RouteList routeList : routeListsList.getRouteLists()) {
+            for (Route route : routeList.getRoutes()) {
                 routeNumber++;
-                createSQLforRoute(bufferedWriter, isoDate, routeNumber, depotToStoreRoute);
-                if (depotToStoreRoute.getDepotList() == null) {
-                    createSQLforNonTrunkedRouteLeg(bufferedWriter, routeNumber, depotToStoreRoute);
-                } else {
-                    createSQLforTrunkedRouteLeg(bufferedWriter, routeNumber, depotToStoreRoute);
+                createSQLforRoute(bufferedWriter, isoDate, routeNumber, route);
+                for (RouteLeg routeLeg : route.getRouteLegs()) {
+                    createSQLforRouteLeg(bufferedWriter, routeNumber, routeLeg);
                 }
             }
         }
@@ -98,60 +96,31 @@ public class ShippingBibleInsertSQL {
         }
     }
 
-    private static void createSQLforRoute(BufferedWriter bufferedWriter, DateFormat isoDate, int routeNumber, DepotToStoreRoute depotToStoreRoute) {
+    private static void createSQLforRoute(BufferedWriter bufferedWriter, DateFormat isoDate, int routeNumber, Route route) {
         try {
             bufferedWriter.write("insert into route " +
                     "(route_number, location_code_start, location_code_end, route_type_code, start_date, end_date) " +
                     "values (" + String.valueOf(routeNumber) +
-                    "," + depotToStoreRoute.getDepot() +
-                    "," + depotToStoreRoute.getStore() +
-                    ",'" + depotToStoreRoute.getRouteTypeCode() + "'" +
-                    ",'" + isoDate.format(depotToStoreRoute.getStartDate()) + "'" +
-                    ",'" + isoDate.format(depotToStoreRoute.getEndDate()) + "'" +
+                    "," + route.getLocationCodeStart() +
+                    "," + route.getLocationCodeEnd() +
+                    ",'" + route.getRouteTypeCode() + "'" +
+                    ",'" + isoDate.format(route.getStartDate()) + "'" +
+                    ",'" + isoDate.format(route.getEndDate()) + "'" +
                     ");" + END_OF_LINE);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    private static void createSQLforNonTrunkedRouteLeg(BufferedWriter bufferedWriter, int routeNumber, DepotToStoreRoute depotToStoreRoute) {
+    private static void createSQLforRouteLeg(BufferedWriter bufferedWriter, int routeNumber, RouteLeg routeLeg) {
         try {
             bufferedWriter.write("insert into route_leg " +
                     "(route_number, leg_number, location_code_from, location_code_to) " +
                     "values (" + String.valueOf(routeNumber) +
-                    ",1" +
-                    "," + depotToStoreRoute.getDepot() +
-                    "," + depotToStoreRoute.getStore() +
+                    "," + String.valueOf(routeLeg.getLegNumber()) +
+                    "," + String.valueOf(routeLeg.getLocationCodeFrom()) +
+                    "," + String.valueOf(routeLeg.getLocationCodeTo()) +
                     ");" + END_OF_LINE);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    private static void createSQLforTrunkedRouteLeg(BufferedWriter bufferedWriter, int routeNumber, DepotToStoreRoute depotToStoreRoute) {
-        try {
-            int legNumber = 0;
-            String fromDepot = depotToStoreRoute.getDepot();
-            for (String depot : depotToStoreRoute.getDepotList()) {
-                legNumber++;
-                bufferedWriter.write("insert into route_leg " +
-                        "(route_number, leg_number, location_code_from, location_code_to) " +
-                        "values (" + String.valueOf(routeNumber) +
-                        "," + String.valueOf(legNumber) +
-                        "," + fromDepot +
-                        "," + depot +
-                        ");" + END_OF_LINE);
-                fromDepot = depot;
-            }
-            legNumber++;
-            bufferedWriter.write("insert into route_leg " +
-                    "(route_number, leg_number, location_code_from, location_code_to) " +
-                    "values (" + String.valueOf(routeNumber) +
-                    "," + String.valueOf(legNumber) +
-                    "," + fromDepot +
-                    "," + depotToStoreRoute.getStore() +
-                    ");" + END_OF_LINE);
-
         } catch (Exception ex) {
             ex.printStackTrace();
         }

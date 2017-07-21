@@ -1,6 +1,8 @@
 package ManiplateWorkbook;
 
-public class RouteLeg {
+import java.io.Serializable;
+
+public class RouteLeg implements Serializable {
     private int routeNumber;
     private int legNumber;
     private int locationCodeFrom;

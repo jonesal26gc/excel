@@ -3,7 +3,7 @@ package ManiplateWorkbook;
 import java.io.Serializable;
 
 public class Location implements Serializable, Comparable {
-    private String locationCode;
+    private int locationCode;
     private String locationTypeCode;
     private String name;
     private String format;
@@ -12,14 +12,14 @@ public class Location implements Serializable, Comparable {
     private String country;
     private String reportingRegion;
 
-    public Location(String locationCode, String locationTypeCode, String name, String format) {
+    public Location(int locationCode, String locationTypeCode, String name, String format) {
         this.locationCode = locationCode;
         this.locationTypeCode = locationTypeCode;
         this.name = name;
         this.format = format;
     }
 
-    public Location(String locationCode, String locationTypeCode, String name, String format, String county, String postcode, String country, String reportingRegion) {
+    public Location(int locationCode, String locationTypeCode, String name, String format, String county, String postcode, String country, String reportingRegion) {
         this.locationCode = locationCode;
         this.locationTypeCode = locationTypeCode;
         this.name = name;
@@ -28,10 +28,6 @@ public class Location implements Serializable, Comparable {
         this.postcode = postcode;
         this.country = country;
         this.reportingRegion = reportingRegion;
-    }
-
-    public String getLocationCode() {
-        return locationCode;
     }
 
     public String getLocationTypeCode() {
@@ -65,7 +61,7 @@ public class Location implements Serializable, Comparable {
     @Override
     public String toString() {
         return "Location{" +
-                "locationCode='" + locationCode + '\'' +
+                "locationCode=" + locationCode +
                 ", locationTypeCode='" + locationTypeCode + '\'' +
                 ", name='" + name + '\'' +
                 ", format='" + format + '\'' +
@@ -77,6 +73,10 @@ public class Location implements Serializable, Comparable {
     }
 
     public int compareTo(Object o) {
-        return Integer.parseInt(this.getLocationCode()) - Integer.parseInt(((Location)o).getLocationCode());
+        return this.getLocationCode() - ((Location) o).getLocationCode();
+    }
+
+    public int getLocationCode() {
+        return locationCode;
     }
 }

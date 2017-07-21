@@ -14,7 +14,7 @@ public class ShippingBibleUpdateShould {
     public void updateDepotLocations() {
 
         DepotLocationsList depotLocationsList = new DepotLocationsList();
-        depotLocationsList.add(new Location("1","depot","depot 1","stream"));
+        depotLocationsList.add(new Location(1,"depot","depot 1","stream"));
 
         Queue<Location> queue = new LinkedList<Location>(depotLocationsList.getLocations());
         while (!queue.isEmpty()){

@@ -66,6 +66,7 @@ public class ShippingBibleWorkbook {
         }
         retrieveEffectiveDatesFromWorkbook();
         buildDepotCrossReference();
+        depotCrossReference.display();
         System.out.println("Bible Start Date is :" + startDate);
         System.out.println("Bible End Date is   :" + endDate);
     }
@@ -127,14 +128,6 @@ public class ShippingBibleWorkbook {
         return depotNumberList.toArray(new String[depotNumberList.size()]);
     }
 
-    public Date getStartDate() {
-        return startDate;
-    }
-
-    public Date getEndDate() {
-        return endDate;
-    }
-
     public DepotLocationsList buildDepotLocationsList() {
         DepotLocationsList depotLocationsList = new DepotLocationsList();
         for (int rowNumber = WORKSHEET_DEPOT_CODES_DATA_ROW_START; rowNumber < depotCodesWorksheet.getLastRowNum(); rowNumber++) {
@@ -145,7 +138,7 @@ public class ShippingBibleWorkbook {
             String concatenatedDepotNumbers = retrieveConcatenatedDepotNumbers(dataRow);
             if (concatenatedDepotNumbers.length() == DEPOT_NUMBER_LENGTH) {
                 depotLocationsList.add(
-                        new Location(concatenatedDepotNumbers,
+                        new Location(Integer.parseInt(concatenatedDepotNumbers),
                                 "DEPOT",
                                 retrieveDepotName(dataRow),
                                 retrieveFormat(dataRow)));
@@ -169,7 +162,7 @@ public class ShippingBibleWorkbook {
                 break;
             }
             storeLocationsList.add(
-                    new Location(Integer.toString((int) dataRow.getCell(1).getNumericCellValue()),
+                    new Location((int) dataRow.getCell(WORKSHEET_DEPOT_NAME_STORE_NUMBER_COLUMN).getNumericCellValue(),
                             "STORE",
                             retrieveStoreName(dataRow),
                             retrieveStoreFormat(dataRow),
@@ -237,29 +230,55 @@ public class ShippingBibleWorkbook {
         return dataRow.getCell(WORKSHEET_DEPOT_NAME_REPORTING_REGION_COLUMN).getStringCellValue();
     }
 
-    public DepotToStoreRouteList buildDepotToStoreRouteList(String targetDepot, String routeTypeCode) {
+    public RouteList buildDepotToStoreRouteList(String targetDepot, String routeTypeCode) {
         int targetDepotColumn = findTargetDepotColumn(targetDepot);
         if (targetDepotColumn == 0) {
             return null;
         }
-        DepotToStoreRouteList depotToStoreRouteList = new DepotToStoreRouteList(depotCrossReference.lookup(targetDepot)[0]);
+        RouteList routeList = new RouteList(Integer.parseInt(depotCrossReference.lookup(targetDepot)[0]));
         for (int rowNumber = 1; rowNumber < depotNameWorksheet.getLastRowNum(); rowNumber++) {
             XSSFRow currentRow = depotNameWorksheet.getRow(rowNumber);
             if (currentRow == null | !isValidStoreNumber(currentRow)) {
                 break;
             }
-            depotToStoreRouteList.add(
-                    new DepotToStoreRoute(
-                            depotToStoreRouteList.getDepot(),
-                            Integer.toString((int) currentRow.getCell(WORKSHEET_DEPOT_NAME_STORE_NUMBER_COLUMN).getNumericCellValue()),
+            String[] depotList = depotCrossReference.lookup(currentRow.getCell(targetDepotColumn).getStringCellValue());
+            ArrayList<RouteLeg> routeLegs = new ArrayList<RouteLeg>();
+            int routeNumber = 0;
+            int legNumber = 1;
+            if (depotList == null) {
+                System.out.println("ERROR - Cannot find '" + currentRow.getCell(targetDepotColumn).getStringCellValue() + "' in the DC Cross-Reference.");
+                //throw new RuntimeException("ERROR - Cannot find '" + currentRow.getCell(targetDepotColumn).getStringCellValue() + "' in the DC Cross-Reference.");
+//                routeLegs.add(new RouteLeg(routeNumber,
+//                        legNumber,
+//                        routeList.getLocationCodeFrom(),
+//                        (int) currentRow.getCell(WORKSHEET_DEPOT_NAME_STORE_NUMBER_COLUMN).getNumericCellValue()));
+            } else {
+                int lastDepot = routeList.getLocationCodeFrom();
+                for (String depot : depotList) {
+                    routeLegs.add(new RouteLeg(routeNumber,
+                            legNumber,
+                            lastDepot,
+                            Integer.parseInt(depot)));
+                    lastDepot = Integer.parseInt(depot);
+                    legNumber++;
+                }
+                routeLegs.add(new RouteLeg(routeNumber,
+                        legNumber,
+                        lastDepot,
+                        (int) currentRow.getCell(WORKSHEET_DEPOT_NAME_STORE_NUMBER_COLUMN).getNumericCellValue()));
+            }
+            routeList.add(
+                    new Route(routeList.getLocationCodeFrom(),
+                            (int) currentRow.getCell(WORKSHEET_DEPOT_NAME_STORE_NUMBER_COLUMN).getNumericCellValue(),
                             routeTypeCode,
-                            depotCrossReference.lookup(currentRow.getCell(targetDepotColumn).getStringCellValue()),
+                            routeLegs,
                             retrieveBibleStartDate(currentRow),
                             retrieveBibleEndDate(currentRow)));
         }
-        depotToStoreRouteList.sort();
-        return depotToStoreRouteList;
+        routeList.sort();
+        return routeList;
     }
+
 
     private int findTargetDepotColumn(String targetDepot) {
         XSSFRow headingsRow = depotNameWorksheet.getRow(WORKSHEET_DEPOT_NAME_HEADER_ROW);
