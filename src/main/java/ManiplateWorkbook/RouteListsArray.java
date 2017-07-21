@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class RouteListsList implements Serializable {
+public class RouteListsArray implements Serializable {
     private ArrayList<RouteList> routeLists = new ArrayList<RouteList>();
 
     public void add(RouteList routeList) {

@@ -9,23 +9,23 @@ public class ShippingBibleWorkbookExtract {
         ShippingBibleWorkbook shippingBibleWorkbook = new ShippingBibleWorkbook("Transport Bible.xlsx");
 
         // load the depot list.
-        DepotLocationList depotLocationList = shippingBibleWorkbook.buildDepotLocationsList();
+        DepotLocationList depotLocationList = shippingBibleWorkbook.buildDepotLocationList();
         System.out.println(depotLocationList.locations.size() + " depots were loaded.");
         //depotLocationList.display();
 
         // load the store list.
-        StoreLocationList storeLocationList = shippingBibleWorkbook.buildStoreLocationsList();
+        StoreLocationList storeLocationList = shippingBibleWorkbook.buildStoreLocationList();
         System.out.println(storeLocationList.locations.size() + " stores were loaded.");
         //storeLocationList.display();
 
         // create the routes for each store.
-        RouteListsList routeListsList = new RouteListsList();
-        routeListsList.add(shippingBibleWorkbook.buildDepotToStoreRouteList("Daventry Clothing", "FRONT"));
-        routeListsList.add(shippingBibleWorkbook.buildDepotToStoreRouteList("Chesterfield", "FRONT" ));
-        System.out.println(routeListsList.getRouteLists().size() + " depots were routed.");
-        routeListsList.sort();
-        for (RouteList depotToStoreRouteList : routeListsList.getRouteLists()) {
-            depotToStoreRouteList.display();
+        RouteListsArray routeListsArray = new RouteListsArray();
+        routeListsArray.add(shippingBibleWorkbook.buildRouteList("Daventry Clothing", "FRONT"));
+        routeListsArray.add(shippingBibleWorkbook.buildRouteList("Chesterfield", "FRONT"));
+        System.out.println(routeListsArray.getRouteLists().size() + " depots were routed.");
+        routeListsArray.sort();
+        for (RouteList routeList : routeListsArray.getRouteLists()) {
+            routeList.display();
             break;
         }
 
@@ -38,7 +38,7 @@ public class ShippingBibleWorkbookExtract {
             System.out.println("Saving Store locations to serialized file.");
             out.writeObject(storeLocationList);
             System.out.println("Saving Route Lists to serialized file.");
-            out.writeObject(routeListsList);
+            out.writeObject(routeListsArray);
             out.close();
             fileOut.close();
             System.out.printf("Serialized data is saved in ShippingBibleWorkbookExtract.ser");

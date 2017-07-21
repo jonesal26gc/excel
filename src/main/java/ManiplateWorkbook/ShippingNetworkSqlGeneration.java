@@ -10,7 +10,7 @@ public class ShippingNetworkSqlGeneration {
     public static void main(String[] args) throws Exception {
         DepotLocationList depotLocationList;
         StoreLocationList storeLocationList;
-        RouteListsList routeListsList;
+        RouteListsArray routeListsArray;
 
         File file = new File("ShippingNetworkInsertSQL.txt");
         FileWriter fileWriter = new FileWriter(file);
@@ -21,7 +21,7 @@ public class ShippingNetworkSqlGeneration {
             ObjectInputStream in = new ObjectInputStream(fileIn);
             depotLocationList = (DepotLocationList) in.readObject();
             storeLocationList = (StoreLocationList) in.readObject();
-            routeListsList = (RouteListsList) in.readObject();
+            routeListsArray = (RouteListsArray) in.readObject();
             in.close();
             fileIn.close();
         } catch (IOException i) {
@@ -35,7 +35,7 @@ public class ShippingNetworkSqlGeneration {
 
         processStoreLocations(storeLocationList, bufferedWriter);
         processDepotLocations(depotLocationList, bufferedWriter);
-        processRoutes(routeListsList, bufferedWriter);
+        processRoutes(routeListsArray, bufferedWriter);
 
         System.out.println("SQL generation is complete.");
     }
@@ -52,10 +52,10 @@ public class ShippingNetworkSqlGeneration {
         }
     }
 
-    private static void processRoutes(RouteListsList routeListsList, BufferedWriter bufferedWriter) {
+    private static void processRoutes(RouteListsArray routeListsArray, BufferedWriter bufferedWriter) {
         DateFormat isoDate = new SimpleDateFormat("yyyy-MM-dd");
         int routeNumber = 0;
-        for (RouteList routeList : routeListsList.getRouteLists()) {
+        for (RouteList routeList : routeListsArray.getRouteLists()) {
             for (Route route : routeList.getRoutes()) {
                 routeNumber++;
                 createSQLforRoute(bufferedWriter, isoDate, routeNumber, route);

@@ -19,12 +19,12 @@ public class StoreLocationList implements Serializable {
     }
 
     public void display() {
-        for (Location location:locations){
+        for (Location location : locations) {
             System.out.println(location.toString());
         }
     }
 
-    public void sort(){
+    public void sort() {
         Collections.sort(locations);
     }
 }

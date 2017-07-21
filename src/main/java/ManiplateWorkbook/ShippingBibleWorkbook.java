@@ -64,14 +64,14 @@ public class ShippingBibleWorkbook {
         } catch (Exception exception) {
             exception.printStackTrace();
         }
-        retrieveEffectiveDatesFromWorkbook();
+        retrieveEffectiveDatesFromDepotNameWorksheet();
         buildDepotCrossReference();
         depotCrossReference.display();
         System.out.println("Bible Start Date is :" + startDate);
         System.out.println("Bible End Date is   :" + endDate);
     }
 
-    public void retrieveEffectiveDatesFromWorkbook() {
+    public void retrieveEffectiveDatesFromDepotNameWorksheet() {
         try {
             XSSFRow currentRow = depotNameWorksheet.getRow(WORKSHEET_DEPOT_NAME_DATA_ROW_START);
             startDate = currentRow.getCell(WORKSHEET_DEPOT_NAME_BIBLE_START_DATE_COLUMN).getDateCellValue();
@@ -90,7 +90,7 @@ public class ShippingBibleWorkbook {
             }
             String depotName = retrieveDepotName(dataRow);
             String concatenatedDepotNumbers = retrieveConcatenatedDepotNumbers(dataRow);
-            depotCrossReference.add(depotName, buildDepotNumberList(concatenatedDepotNumbers));
+            depotCrossReference.add(depotName.toUpperCase(), buildDepotNumberArray(concatenatedDepotNumbers));
         }
         System.out.println(depotCrossReference.displayCount() + " depots were loaded to the cross-reference.");
     }
@@ -119,17 +119,17 @@ public class ShippingBibleWorkbook {
         return concatenatedDepotNumbers;
     }
 
-    private String[] buildDepotNumberList(String concatenatedDepotNumbers) {
-        ArrayList<String> depotNumberList = new ArrayList<String>();
+    private String[] buildDepotNumberArray(String concatenatedDepotNumbers) {
+        ArrayList<String> depotNumberArrayList = new ArrayList<String>();
         while (concatenatedDepotNumbers.length() > 0) {
-            depotNumberList.add(concatenatedDepotNumbers.substring(0, DEPOT_NUMBER_LENGTH));
+            depotNumberArrayList.add(concatenatedDepotNumbers.substring(0, DEPOT_NUMBER_LENGTH));
             concatenatedDepotNumbers = concatenatedDepotNumbers.substring(DEPOT_NUMBER_LENGTH);
         }
-        return depotNumberList.toArray(new String[depotNumberList.size()]);
+        return depotNumberArrayList.toArray(new String[depotNumberArrayList.size()]);
     }
 
-    public DepotLocationsList buildDepotLocationsList() {
-        DepotLocationsList depotLocationsList = new DepotLocationsList();
+    public DepotLocationList buildDepotLocationList() {
+        DepotLocationList depotLocationList = new DepotLocationList();
         for (int rowNumber = WORKSHEET_DEPOT_CODES_DATA_ROW_START; rowNumber < depotCodesWorksheet.getLastRowNum(); rowNumber++) {
             XSSFRow dataRow = depotCodesWorksheet.getRow(rowNumber);
             if (dataRow == null) {
@@ -137,31 +137,31 @@ public class ShippingBibleWorkbook {
             }
             String concatenatedDepotNumbers = retrieveConcatenatedDepotNumbers(dataRow);
             if (concatenatedDepotNumbers.length() == DEPOT_NUMBER_LENGTH) {
-                depotLocationsList.add(
+                depotLocationList.add(
                         new Location(Integer.parseInt(concatenatedDepotNumbers),
                                 "DEPOT",
                                 retrieveDepotName(dataRow),
-                                retrieveFormat(dataRow)));
+                                retrieveDepotStream(dataRow)));
             }
         }
-        depotLocationsList.sort();
-        return depotLocationsList;
+        depotLocationList.sort();
+        return depotLocationList;
     }
 
-    private String retrieveFormat(XSSFRow dataRow) {
+    private String retrieveDepotStream(XSSFRow dataRow) {
         return dataRow.getCell(WORKSHEET_DEPOT_CODES_STREAM_COLUMN).getStringCellValue();
     }
 
-    public StoreLocationsList buildStoreLocationsList() {
+    public StoreLocationList buildStoreLocationList() {
         verifyLocationOfDepotNameTableData();
-        StoreLocationsList storeLocationsList = new StoreLocationsList();
+        StoreLocationList storeLocationList = new StoreLocationList();
 
         for (int rowNumber = WORKSHEET_DEPOT_NAME_DATA_ROW_START; rowNumber < depotNameWorksheet.getLastRowNum(); rowNumber++) {
             XSSFRow dataRow = depotNameWorksheet.getRow(rowNumber);
             if (dataRow == null | !isValidStoreNumber(dataRow)) {
                 break;
             }
-            storeLocationsList.add(
+            storeLocationList.add(
                     new Location((int) dataRow.getCell(WORKSHEET_DEPOT_NAME_STORE_NUMBER_COLUMN).getNumericCellValue(),
                             "STORE",
                             retrieveStoreName(dataRow),
@@ -171,8 +171,8 @@ public class ShippingBibleWorkbook {
                             retrieveStoreCountry(dataRow),
                             retrieveStoreReportingRegion(dataRow)));
         }
-        storeLocationsList.sort();
-        return storeLocationsList;
+        storeLocationList.sort();
+        return storeLocationList;
     }
 
     private void verifyLocationOfDepotNameTableData() {
@@ -230,21 +230,19 @@ public class ShippingBibleWorkbook {
         return dataRow.getCell(WORKSHEET_DEPOT_NAME_REPORTING_REGION_COLUMN).getStringCellValue();
     }
 
-    public RouteList buildDepotToStoreRouteList(String targetDepot, String routeTypeCode) {
+    public RouteList buildRouteList(String targetDepot, String routeTypeCode) {
         int targetDepotColumn = findTargetDepotColumn(targetDepot);
         if (targetDepotColumn == 0) {
             return null;
         }
-        RouteList routeList = new RouteList(Integer.parseInt(depotCrossReference.lookup(targetDepot)[0]));
+        RouteList routeList = new RouteList(Integer.parseInt(depotCrossReference.lookup(targetDepot.toUpperCase())[0]));
         for (int rowNumber = 1; rowNumber < depotNameWorksheet.getLastRowNum(); rowNumber++) {
             XSSFRow currentRow = depotNameWorksheet.getRow(rowNumber);
             if (currentRow == null | !isValidStoreNumber(currentRow)) {
                 break;
             }
-            String[] depotList = depotCrossReference.lookup(currentRow.getCell(targetDepotColumn).getStringCellValue());
+            String[] depotList = depotCrossReference.lookup(currentRow.getCell(targetDepotColumn).getStringCellValue().toUpperCase());
             ArrayList<RouteLeg> routeLegs = new ArrayList<RouteLeg>();
-            int routeNumber = 0;
-            int legNumber = 1;
             if (depotList == null) {
                 System.out.println("ERROR - Cannot find '" + currentRow.getCell(targetDepotColumn).getStringCellValue() + "' in the DC Cross-Reference.");
                 //throw new RuntimeException("ERROR - Cannot find '" + currentRow.getCell(targetDepotColumn).getStringCellValue() + "' in the DC Cross-Reference.");
@@ -253,6 +251,8 @@ public class ShippingBibleWorkbook {
 //                        routeList.getLocationCodeFrom(),
 //                        (int) currentRow.getCell(WORKSHEET_DEPOT_NAME_STORE_NUMBER_COLUMN).getNumericCellValue()));
             } else {
+                int routeNumber = 0;
+                int legNumber = 1;
                 int lastDepot = routeList.getLocationCodeFrom();
                 for (String depot : depotList) {
                     routeLegs.add(new RouteLeg(routeNumber,
@@ -272,8 +272,8 @@ public class ShippingBibleWorkbook {
                             (int) currentRow.getCell(WORKSHEET_DEPOT_NAME_STORE_NUMBER_COLUMN).getNumericCellValue(),
                             routeTypeCode,
                             routeLegs,
-                            retrieveBibleStartDate(currentRow),
-                            retrieveBibleEndDate(currentRow)));
+                            retrieveStoreBibleStartDate(currentRow),
+                            retrieveStoreBibleEndDate(currentRow)));
         }
         routeList.sort();
         return routeList;
@@ -290,7 +290,7 @@ public class ShippingBibleWorkbook {
         return 0;
     }
 
-    private Date retrieveBibleStartDate(XSSFRow currentRow) {
+    private Date retrieveStoreBibleStartDate(XSSFRow currentRow) {
         try {
             return currentRow.getCell(WORKSHEET_DEPOT_NAME_BIBLE_START_DATE_COLUMN).getDateCellValue();
         } catch (Exception ex) {
@@ -298,7 +298,7 @@ public class ShippingBibleWorkbook {
         }
     }
 
-    private Date retrieveBibleEndDate(XSSFRow currentRow) {
+    private Date retrieveStoreBibleEndDate(XSSFRow currentRow) {
         try {
             return currentRow.getCell(WORKSHEET_DEPOT_NAME_BIBLE_END_DATE_COLUMN).getDateCellValue();
         } catch (Exception ex) {
