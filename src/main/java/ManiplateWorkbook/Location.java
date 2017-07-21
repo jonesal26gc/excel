@@ -2,7 +2,7 @@ package ManiplateWorkbook;
 
 import java.io.Serializable;
 
-public class Location implements Serializable {
+public class Location implements Serializable, Comparable {
     private String locationCode;
     private String locationTypeCode;
     private String name;
@@ -74,5 +74,9 @@ public class Location implements Serializable {
                 ", country='" + country + '\'' +
                 ", reportingRegion='" + reportingRegion + '\'' +
                 '}';
+    }
+
+    public int compareTo(Object o) {
+        return Integer.parseInt(this.getLocationCode()) - Integer.parseInt(((Location)o).getLocationCode());
     }
 }

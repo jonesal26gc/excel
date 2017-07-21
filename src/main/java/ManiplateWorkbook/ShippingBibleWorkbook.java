@@ -151,6 +151,7 @@ public class ShippingBibleWorkbook {
                                 retrieveFormat(dataRow)));
             }
         }
+        depotLocationsList.sort();
         return depotLocationsList;
     }
 
@@ -177,6 +178,7 @@ public class ShippingBibleWorkbook {
                             retrieveStoreCountry(dataRow),
                             retrieveStoreReportingRegion(dataRow)));
         }
+        storeLocationsList.sort();
         return storeLocationsList;
     }
 
