@@ -4,14 +4,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class StoreLocationsList implements Serializable {
+public class DepotLocationList implements Serializable {
     ArrayList<Location> locations = new ArrayList<Location>();
 
-    public StoreLocationsList() {
+    public DepotLocationList() {
     }
 
-    public void add(Location store) {
-        locations.add(store);
+    public void add(Location depot) {
+        locations.add(depot);
     }
 
     public ArrayList<Location> getLocations() {
@@ -24,7 +24,7 @@ public class StoreLocationsList implements Serializable {
         }
     }
 
-    public void sort(){
+    public void sort() {
         Collections.sort(locations);
     }
 }

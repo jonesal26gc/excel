@@ -4,12 +4,12 @@ import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
-public class ShippingBibleInsertSQL {
+public class ShippingNetworkSqlGeneration {
     public static final String END_OF_LINE = "\n";
 
     public static void main(String[] args) throws Exception {
-        DepotLocationsList depotLocationsList;
-        StoreLocationsList storeLocationsList;
+        DepotLocationList depotLocationList;
+        StoreLocationList storeLocationList;
         RouteListsList routeListsList;
 
         File file = new File("ShippingNetworkInsertSQL.txt");
@@ -17,10 +17,10 @@ public class ShippingBibleInsertSQL {
         BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 
         try {
-            FileInputStream fileIn = new FileInputStream("ShippingBibleExtract.ser");
+            FileInputStream fileIn = new FileInputStream("ShippingBibleWorkbookExtract.ser");
             ObjectInputStream in = new ObjectInputStream(fileIn);
-            depotLocationsList = (DepotLocationsList) in.readObject();
-            storeLocationsList = (StoreLocationsList) in.readObject();
+            depotLocationList = (DepotLocationList) in.readObject();
+            storeLocationList = (StoreLocationList) in.readObject();
             routeListsList = (RouteListsList) in.readObject();
             in.close();
             fileIn.close();
@@ -33,21 +33,21 @@ public class ShippingBibleInsertSQL {
             return;
         }
 
-        processStoreLocations(storeLocationsList, bufferedWriter);
-        processDepotLocations(depotLocationsList, bufferedWriter);
+        processStoreLocations(storeLocationList, bufferedWriter);
+        processDepotLocations(depotLocationList, bufferedWriter);
         processRoutes(routeListsList, bufferedWriter);
 
         System.out.println("SQL generation is complete.");
     }
 
-    private static void processStoreLocations(StoreLocationsList storeLocationsList, BufferedWriter bufferedWriter) {
-        for (Location location : storeLocationsList.getLocations()) {
+    private static void processStoreLocations(StoreLocationList storeLocationList, BufferedWriter bufferedWriter) {
+        for (Location location : storeLocationList.getLocations()) {
             createSQLforStoreLocation(bufferedWriter, location);
         }
     }
 
-    private static void processDepotLocations(DepotLocationsList depotLocationsList, BufferedWriter bufferedWriter) {
-        for (Location location : depotLocationsList.getLocations()) {
+    private static void processDepotLocations(DepotLocationList depotLocationList, BufferedWriter bufferedWriter) {
+        for (Location location : depotLocationList.getLocations()) {
             createSQLforDepotLocations(bufferedWriter, location);
         }
     }
