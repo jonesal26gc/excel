@@ -3,6 +3,7 @@ import ManiplateWorkbook.ShippingDatabaseConnectionForPostgres;
 import org.junit.Test;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
 import java.util.Collections;
@@ -16,18 +17,22 @@ public class ShippingDatabaseConnectionForPostgresShould {
         ShippingDatabaseConnectionForPostgres shippingDatabaseConnectionForPostgres = new ShippingDatabaseConnectionForPostgres();
         shippingDatabaseConnectionForPostgres.establishConnection();
         try {
-            Statement stmt = shippingDatabaseConnectionForPostgres.c.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT count(*) as num_of_locations FROM location;");
-            while (rs.next()) {
-                int numberOfLocations = rs.getInt("num_of_locations");
-                System.out.println("number of locations is: " + numberOfLocations);
-            }
-            rs.close();
-            stmt.close();
+            processDepotLocations(shippingDatabaseConnectionForPostgres);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
         shippingDatabaseConnectionForPostgres.terminateConnection();
+    }
+
+    private void processDepotLocations(ShippingDatabaseConnectionForPostgres shippingDatabaseConnectionForPostgres) throws SQLException {
+        Statement stmt = shippingDatabaseConnectionForPostgres.c.createStatement();
+        ResultSet rs = stmt.executeQuery("SELECT count(*) as num_of_locations FROM location;");
+        while (rs.next()) {
+            int numberOfLocations = rs.getInt("num_of_locations");
+            System.out.println("number of locations is: " + numberOfLocations);
+        }
+        rs.close();
+        stmt.close();
     }
 
 

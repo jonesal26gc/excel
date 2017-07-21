@@ -23,6 +23,7 @@ public class ShippingBibleExtract {
         depotToStoreRouteListsList.add(shippingBibleWorkbook.buildDepotToStoreRouteList("Daventry Clothing", "FRONT"));
         depotToStoreRouteListsList.add(shippingBibleWorkbook.buildDepotToStoreRouteList("Chesterfield", "FRONT" ));
         System.out.println(depotToStoreRouteListsList.getDepotToStoreRouteLists().size() + " depots were routed.");
+        depotToStoreRouteListsList.sort();
 //        for (DepotToStoreRouteList depotToStoreRouteList : depotToStoreRouteListsList.getDepotToStoreRouteLists()) {
 //            depotToStoreRouteList.display();
 //        }

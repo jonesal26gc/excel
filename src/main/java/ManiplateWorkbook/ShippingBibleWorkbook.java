@@ -257,6 +257,7 @@ public class ShippingBibleWorkbook {
                             retrieveBibleStartDate(currentRow),
                             retrieveBibleEndDate(currentRow)));
         }
+        depotToStoreRouteList.sort();
         return depotToStoreRouteList;
     }
 

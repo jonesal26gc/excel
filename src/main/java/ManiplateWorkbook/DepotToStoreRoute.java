@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Date;
 
-public class DepotToStoreRoute implements Serializable {
+public class DepotToStoreRoute implements Serializable, Comparable {
     private String depot;
     private String store;
     private String routeTypeCode;
@@ -55,5 +55,9 @@ public class DepotToStoreRoute implements Serializable {
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +
                 '}';
+    }
+
+    public int compareTo(Object o) {
+        return Integer.parseInt(this.getDepot()) - Integer.parseInt(((DepotToStoreRoute)o).getStore());
     }
 }
