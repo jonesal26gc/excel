@@ -9,7 +9,7 @@ import java.io.Serializable;
                         " where route_number = :routeNumber" +
                         " order by leg_number asc")})
 
-@Entity(name="route_leg")
+@Entity(name = "route_leg")
 @Table(name = "ROUTE_LEG")
 public class RouteLeg implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
@@ -73,7 +73,12 @@ public class RouteLeg implements Serializable {
                 '}';
     }
 
-    public boolean routeLegMatches() {
+    public boolean routeLegMatch(RouteLeg routeLeg) {
+        if (this.legNumber != routeLeg.legNumber
+                | this.locationCodeFrom != routeLeg.locationCodeFrom
+                | this.locationCodeTo != routeLeg.locationCodeTo) {
+            return false;
+        }
         return true;
     }
 }

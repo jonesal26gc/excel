@@ -5,8 +5,6 @@ import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Set;
 
@@ -121,16 +119,16 @@ public class Route implements Serializable, Comparable {
 
 
     public boolean routeMatches(Route route) {
-        if (this.locationCodeStart != route.getLocationCodeStart()
-                | this.locationCodeEnd != route.getLocationCodeEnd()
-                | (!this.routeTypeCode.equals(route.getRouteTypeCode()))
-                | this.startDate != route.getStartDate()
-                | this.endDate != route.getEndDate()
-                | this.routeLegs.size() != route.getRouteLegs().size()) {
+        if (this.locationCodeStart != route.locationCodeStart
+                | this.locationCodeEnd != route.locationCodeEnd
+                | (!this.routeTypeCode.equals(route.routeTypeCode))
+                | this.startDate != route.startDate
+                | this.endDate != route.endDate
+                | this.routeLegs.size() != route.routeLegs.size()) {
             return false;
         }
         for (RouteLeg routeLeg : this.routeLegs) {
-            if (!routeLeg.routeLegMatches()) {
+            if (!routeLeg.routeLegMatch(routeLeg)) {
                 return false;
             }
         }
