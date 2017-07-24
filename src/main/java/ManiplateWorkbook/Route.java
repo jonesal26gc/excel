@@ -123,11 +123,10 @@ public class Route implements Serializable, Comparable {
     public boolean routeMatches(Route route) {
         if (this.locationCodeStart != route.getLocationCodeStart()
                 | this.locationCodeEnd != route.getLocationCodeEnd()
-                | this.routeTypeCode != route.getRouteTypeCode()
+                | (!this.routeTypeCode.equals(route.getRouteTypeCode()))
                 | this.startDate != route.getStartDate()
                 | this.endDate != route.getEndDate()
-                | this.routeLegs.size() != route.getRouteLegs().size()
-                ) {
+                | this.routeLegs.size() != route.getRouteLegs().size()) {
             return false;
         }
         for (RouteLeg routeLeg : this.routeLegs) {
