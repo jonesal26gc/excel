@@ -50,8 +50,18 @@ public class Route implements Serializable, Comparable {
                 '}';
     }
 
+    // Compare the Route objects on Start, End, type and start date sequence.
     public int compareTo(Object o) {
-        return this.getLocationCodeEnd() - ((Route) o).getLocationCodeEnd();
+        if (this.getLocationCodeStart() - ((Route) o).getLocationCodeStart() < 0) {
+            return -1;
+        }
+        if (this.getLocationCodeEnd() - ((Route) o).getLocationCodeEnd() < 0) {
+            return -1;
+        }
+        if (this.getRouteTypeCode().compareTo(((Route) o).getRouteTypeCode()) < 0) {
+            return -1;
+        }
+        return this.getStartDate().compareTo(((Route) o).getStartDate());
     }
 
     public int getLocationCodeEnd() {
