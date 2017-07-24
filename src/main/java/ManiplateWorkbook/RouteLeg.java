@@ -3,10 +3,16 @@ package ManiplateWorkbook;
 import javax.persistence.*;
 import java.io.Serializable;
 
+@NamedQueries({
+        @NamedQuery(name = "allRouteLegs",
+                query = "from route_leg " +
+                        " where route_number = :routeNumber" +
+                        " order by leg_number asc")})
+
 @Entity(name="route_leg")
 @Table(name = "ROUTE_LEG")
 public class RouteLeg implements Serializable {
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ROUTE_NUMBER", nullable = false)
     private Route route;
     @Id
@@ -65,5 +71,9 @@ public class RouteLeg implements Serializable {
                 ", locationCodeFrom=" + locationCodeFrom +
                 ", locationCodeTo=" + locationCodeTo +
                 '}';
+    }
+
+    public boolean routeLegMatches() {
+        return true;
     }
 }

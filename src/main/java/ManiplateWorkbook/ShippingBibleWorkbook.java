@@ -6,10 +6,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class ShippingBibleWorkbook {
     public static final int WORKSHEET_DEPOT_NAME_HEADER_ROW = 0;
@@ -244,7 +241,7 @@ public class ShippingBibleWorkbook {
                 break;
             }
             String[] depotList = depotCrossReference.lookup(currentRow.getCell(targetDepotColumn).getStringCellValue().toUpperCase());
-            ArrayList<RouteLeg> routeLegs = new ArrayList<RouteLeg>();
+            Set<RouteLeg> routeLegs = new LinkedHashSet<RouteLeg>();
             if (depotList == null) {
                 System.out.println("ERROR - Cannot find '" + currentRow.getCell(targetDepotColumn).getStringCellValue() + "' in the DC Cross-Reference.");
                 //throw new RuntimeException("ERROR - Cannot find '" + currentRow.getCell(targetDepotColumn).getStringCellValue() + "' in the DC Cross-Reference.");
@@ -274,7 +271,7 @@ public class ShippingBibleWorkbook {
                             routeList.getLocationCodeFrom(),
                             (int) currentRow.getCell(WORKSHEET_DEPOT_NAME_STORE_NUMBER_COLUMN).getNumericCellValue(),
                             routeTypeCode,
-                            new HashSet<RouteLeg>(routeLegs),
+                            routeLegs,
                             retrieveStoreBibleStartDate(currentRow),
                             retrieveStoreBibleEndDate(currentRow)));
         }

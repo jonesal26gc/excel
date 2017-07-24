@@ -21,7 +21,7 @@ public class ShippingBibleWorkbookExtract {
         // create the routes for each store.
         RouteListsArray routeListsArray = new RouteListsArray();
         routeListsArray.add(shippingBibleWorkbook.buildRouteList("Daventry Clothing", "FRONT"));
-        routeListsArray.add(shippingBibleWorkbook.buildRouteList("Chesterfield", "FRONT"));
+        //routeListsArray.add(shippingBibleWorkbook.buildRouteList("Chesterfield", "FRONT"));
         System.out.println(routeListsArray.getRouteLists().size() + " depots were routed.");
         routeListsArray.sort();
         for (RouteList routeList : routeListsArray.getRouteLists()) {

@@ -1,5 +1,8 @@
 package ManiplateWorkbook;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -7,7 +10,13 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Set;
 
-@Entity(name="route")
+@NamedQueries({
+        @NamedQuery(name = "firstTenRoutes",
+                query = "from route " +
+                        " where route_number between 1 and 10" +
+                        " order by route_number asc")})
+
+@Entity(name = "route")
 @Table(name = "ROUTE")
 public class Route implements Serializable, Comparable {
 
@@ -29,7 +38,9 @@ public class Route implements Serializable, Comparable {
     private int locationCodeEnd;
     @Column(name = "route_type_code")
     private String routeTypeCode;
-    @OneToMany(mappedBy = "route")
+    @OneToMany(mappedBy = "route", fetch = FetchType.EAGER)
+    @Fetch(FetchMode.JOIN)
+    //@JoinColumns(@JoinColumn(name="route_number",referencedColumnName = "route_number"))
     private Set<RouteLeg> routeLegs;
     @Column(name = "start_date")
     private Date startDate;
@@ -106,5 +117,24 @@ public class Route implements Serializable, Comparable {
 
     public void setRoute_number(int route_number) {
         this.route_number = route_number;
+    }
+
+
+    public boolean routeMatches(Route route) {
+        if (this.locationCodeStart != route.getLocationCodeStart()
+                | this.locationCodeEnd != route.getLocationCodeEnd()
+                | this.routeTypeCode != route.getRouteTypeCode()
+                | this.startDate != route.getStartDate()
+                | this.endDate != route.getEndDate()
+                | this.routeLegs.size() != route.getRouteLegs().size()
+                ) {
+            return false;
+        }
+        for (RouteLeg routeLeg : this.routeLegs) {
+            if (!routeLeg.routeLegMatches()) {
+                return false;
+            }
+        }
+        return true;
     }
 }

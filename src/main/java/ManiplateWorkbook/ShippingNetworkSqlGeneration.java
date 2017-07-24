@@ -55,13 +55,15 @@ public class ShippingNetworkSqlGeneration {
     private static void processRoutes(RouteListsArray routeListsArray, BufferedWriter bufferedWriter) {
         DateFormat isoDate = new SimpleDateFormat("yyyy-MM-dd");
         int routeNumber = 0;
+        int legNumber = 0;
         for (RouteList routeList : routeListsArray.getRouteLists()) {
             for (Route route : routeList.getRoutes()) {
                 routeNumber++;
                 route.setRoute_number(routeNumber);
                 createSQLforRoute(bufferedWriter, isoDate, route);
                 for (RouteLeg routeLeg : route.getRouteLegs()) {
-                    createSQLforRouteLeg(bufferedWriter, route.getRoute_number(), routeLeg);
+                    legNumber++;
+                    createSQLforRouteLeg(bufferedWriter, route.getRoute_number(), routeLeg, legNumber);
                 }
             }
         }
@@ -113,12 +115,13 @@ public class ShippingNetworkSqlGeneration {
         }
     }
 
-    private static void createSQLforRouteLeg(BufferedWriter bufferedWriter, int routeNumber, RouteLeg routeLeg) {
+    private static void createSQLforRouteLeg(BufferedWriter bufferedWriter, int routeNumber, RouteLeg routeLeg, int legNumber) {
         try {
             bufferedWriter.write("insert into route_leg " +
                     "(route_number, leg_number, location_code_from, location_code_to) " +
                     "values (" + String.valueOf(routeNumber) +
-                    "," + String.valueOf(routeLeg.getLegNumber()) +
+                    "," + String.valueOf(legNumber) +
+                    //"," + String.valueOf(routeLeg.getLegNumber()) +
                     "," + String.valueOf(routeLeg.getLocationCodeFrom()) +
                     "," + String.valueOf(routeLeg.getLocationCodeTo()) +
                     ");" + END_OF_LINE);
