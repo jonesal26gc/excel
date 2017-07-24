@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ShippingBibleWorkbook {
     public static final int WORKSHEET_DEPOT_NAME_HEADER_ROW = 0;
@@ -251,27 +253,28 @@ public class ShippingBibleWorkbook {
 //                        routeList.getLocationCodeFrom(),
 //                        (int) currentRow.getCell(WORKSHEET_DEPOT_NAME_STORE_NUMBER_COLUMN).getNumericCellValue()));
             } else {
-                int routeNumber = 0;
+                if (depotList.equals("000")) {
+                    break;
+                }
                 int legNumber = 1;
                 int lastDepot = routeList.getLocationCodeFrom();
                 for (String depot : depotList) {
-                    routeLegs.add(new RouteLeg(routeNumber,
-                            legNumber,
+                    routeLegs.add(new RouteLeg(legNumber,
                             lastDepot,
                             Integer.parseInt(depot)));
                     lastDepot = Integer.parseInt(depot);
                     legNumber++;
                 }
-                routeLegs.add(new RouteLeg(routeNumber,
-                        legNumber,
+                routeLegs.add(new RouteLeg(legNumber,
                         lastDepot,
                         (int) currentRow.getCell(WORKSHEET_DEPOT_NAME_STORE_NUMBER_COLUMN).getNumericCellValue()));
             }
             routeList.add(
-                    new Route(routeList.getLocationCodeFrom(),
+                    new Route(0,
+                            routeList.getLocationCodeFrom(),
                             (int) currentRow.getCell(WORKSHEET_DEPOT_NAME_STORE_NUMBER_COLUMN).getNumericCellValue(),
                             routeTypeCode,
-                            routeLegs,
+                            new HashSet<RouteLeg>(routeLegs),
                             retrieveStoreBibleStartDate(currentRow),
                             retrieveStoreBibleEndDate(currentRow)));
         }

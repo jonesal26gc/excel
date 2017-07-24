@@ -1,26 +1,37 @@
 package ManiplateWorkbook;
 
+import javax.persistence.*;
 import java.io.Serializable;
 
+@Entity(name="route_leg")
+@Table(name = "ROUTE_LEG")
 public class RouteLeg implements Serializable {
-    private int routeNumber;
+    @ManyToOne
+    @JoinColumn(name = "ROUTE_NUMBER", nullable = false)
+    private Route route;
+    @Id
+    @Column(name = "LEG_NUMBER")
     private int legNumber;
+    @Column(name = "location_code_from")
     private int locationCodeFrom;
+    @Column(name = "location_code_to")
     private int locationCodeTo;
 
-    public RouteLeg(int routeNumber, int legNumber, int locationCodeFrom, int locationCodeTo) {
-        this.routeNumber = routeNumber;
+    public RouteLeg() {
+    }
+
+    public RouteLeg(int legNumber, int locationCodeFrom, int locationCodeTo) {
         this.legNumber = legNumber;
         this.locationCodeFrom = locationCodeFrom;
         this.locationCodeTo = locationCodeTo;
     }
 
-    public int getRouteNumber() {
-        return routeNumber;
+    public Route getRoute() {
+        return route;
     }
 
-    public void setRouteNumber(int routeNumber) {
-        this.routeNumber = routeNumber;
+    public void setRoute(Route route) {
+        this.route = route;
     }
 
     public int getLegNumber() {
@@ -50,8 +61,7 @@ public class RouteLeg implements Serializable {
     @Override
     public String toString() {
         return "RouteLeg{" +
-                "routeNumber=" + routeNumber +
-                ", legNumber=" + legNumber +
+                "legNumber=" + legNumber +
                 ", locationCodeFrom=" + locationCodeFrom +
                 ", locationCodeTo=" + locationCodeTo +
                 '}';

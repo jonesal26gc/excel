@@ -12,7 +12,7 @@ import java.io.Serializable;
                 query = "from location " +
                         " where location_type_code = 'STORE'")})
 
-@Entity(name = "location")
+@Entity(name="location")
 @Table(name = "LOCATION")
 public class Location implements Serializable, Comparable {
     @Id

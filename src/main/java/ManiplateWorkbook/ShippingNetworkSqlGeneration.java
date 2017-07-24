@@ -58,9 +58,10 @@ public class ShippingNetworkSqlGeneration {
         for (RouteList routeList : routeListsArray.getRouteLists()) {
             for (Route route : routeList.getRoutes()) {
                 routeNumber++;
-                createSQLforRoute(bufferedWriter, isoDate, routeNumber, route);
+                route.setRoute_number(routeNumber);
+                createSQLforRoute(bufferedWriter, isoDate, route);
                 for (RouteLeg routeLeg : route.getRouteLegs()) {
-                    createSQLforRouteLeg(bufferedWriter, routeNumber, routeLeg);
+                    createSQLforRouteLeg(bufferedWriter, route.getRoute_number(), routeLeg);
                 }
             }
         }
@@ -96,11 +97,11 @@ public class ShippingNetworkSqlGeneration {
         }
     }
 
-    private static void createSQLforRoute(BufferedWriter bufferedWriter, DateFormat isoDate, int routeNumber, Route route) {
+    private static void createSQLforRoute(BufferedWriter bufferedWriter, DateFormat isoDate, Route route) {
         try {
             bufferedWriter.write("insert into route " +
                     "(route_number, location_code_start, location_code_end, route_type_code, start_date, end_date) " +
-                    "values (" + String.valueOf(routeNumber) +
+                    "values (" + String.valueOf(route.getRoute_number()) +
                     "," + route.getLocationCodeStart() +
                     "," + route.getLocationCodeEnd() +
                     ",'" + route.getRouteTypeCode() + "'" +
