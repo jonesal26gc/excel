@@ -12,7 +12,7 @@ import java.io.Serializable;
                 query = "from location " +
                         " where location_type_code = 'STORE'")})
 
-@Entity(name="location")
+@Entity(name = "location")
 @Table(name = "LOCATION")
 public class Location implements Serializable, Comparable {
     @Id
@@ -103,4 +103,15 @@ public class Location implements Serializable, Comparable {
     public int getLocationCode() {
         return locationCode;
     }
+
+    public boolean locationMatches(Location location) {
+        return (this.locationTypeCode.equals(location.locationTypeCode))
+                && (this.name.equals(location.name))
+                && (this.format.equals(location.format))
+                && (this.county.equals(location.county))
+                && (this.postcode.equals(location.postcode))
+                && (this.country.equals(location.country))
+                && (this.reportingRegion.equals(location.reportingRegion));
+    }
 }
+

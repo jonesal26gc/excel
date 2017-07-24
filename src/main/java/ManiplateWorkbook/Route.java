@@ -121,16 +121,16 @@ public class Route implements Serializable, Comparable {
     }
 
     public boolean routeMatches(Route route) {
-        if (this.locationCodeStart != route.locationCodeStart
-                | this.locationCodeEnd != route.locationCodeEnd
-                | (!this.routeTypeCode.equals(route.routeTypeCode))
-                | this.startDate != route.startDate
-                | this.endDate != route.endDate
-                | this.routeLegs.size() != route.routeLegs.size()) {
+        if (!(this.locationCodeStart == route.locationCodeStart
+                && this.locationCodeEnd == route.locationCodeEnd
+                && this.routeTypeCode.equals(route.routeTypeCode)
+                && this.startDate == route.startDate
+                && this.endDate == route.endDate
+                && this.routeLegs.size() == route.routeLegs.size())) {
             return false;
         }
         for (RouteLeg routeLeg : this.routeLegs) {
-            if (!routeLeg.routeLegMatch(routeLeg)) {
+            if (!(routeLeg.routeLegMatch(routeLeg))) {
                 return false;
             }
         }

@@ -74,11 +74,8 @@ public class RouteLeg implements Serializable {
     }
 
     public boolean routeLegMatch(RouteLeg routeLeg) {
-        if (this.legNumber != routeLeg.legNumber
-                | this.locationCodeFrom != routeLeg.locationCodeFrom
-                | this.locationCodeTo != routeLeg.locationCodeTo) {
-            return false;
-        }
-        return true;
+        return (this.legNumber == routeLeg.legNumber
+                && this.locationCodeFrom == routeLeg.locationCodeFrom
+                && this.locationCodeTo == routeLeg.locationCodeTo);
     }
 }
