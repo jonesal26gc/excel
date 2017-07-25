@@ -129,6 +129,7 @@ public class ShippingBibleWorkbook {
 
     public DepotLocationList buildDepotLocationList() {
         DepotLocationList depotLocationList = new DepotLocationList();
+        ArrayList<Integer> locationCodesEncountered = new ArrayList<Integer>();
         for (int rowNumber = WORKSHEET_DEPOT_CODES_DATA_ROW_START; rowNumber < depotCodesWorksheet.getLastRowNum(); rowNumber++) {
             XSSFRow dataRow = depotCodesWorksheet.getRow(rowNumber);
             if (dataRow == null) {
@@ -136,8 +137,14 @@ public class ShippingBibleWorkbook {
             }
             String concatenatedDepotNumbers = retrieveConcatenatedDepotNumbers(dataRow);
             if (concatenatedDepotNumbers.length() == DEPOT_NUMBER_LENGTH) {
+                Integer locationCode = Integer.parseInt(concatenatedDepotNumbers);
+                if (locationCodesEncountered.contains(locationCode)) {
+                    System.out.println("WARNING - Duplicated Location (Depot) " + locationCode + " encountered.");
+                    continue;
+                }
+                locationCodesEncountered.add(locationCode);
                 depotLocationList.add(
-                        new Location(Integer.parseInt(concatenatedDepotNumbers),
+                        new Location(locationCode,
                                 "DEPOT",
                                 retrieveDepotName(dataRow),
                                 retrieveDepotStream(dataRow)));
@@ -154,12 +161,19 @@ public class ShippingBibleWorkbook {
     public StoreLocationList buildStoreLocationList() {
         verifyLocationOfDepotNameTableData();
         StoreLocationList storeLocationList = new StoreLocationList();
+        ArrayList<Integer> locationCodesEncountered = new ArrayList<Integer>();
 
         for (int rowNumber = WORKSHEET_DEPOT_NAME_DATA_ROW_START; rowNumber < depotNameWorksheet.getLastRowNum(); rowNumber++) {
             XSSFRow dataRow = depotNameWorksheet.getRow(rowNumber);
             if (dataRow == null | !isValidStoreNumber(dataRow)) {
                 break;
             }
+            Integer locationCode = (int) dataRow.getCell(WORKSHEET_DEPOT_NAME_STORE_NUMBER_COLUMN).getNumericCellValue();
+            if (locationCodesEncountered.contains(locationCode)) {
+                System.out.println("WARNING - Duplicated Location (Store) " + locationCode + " encountered.");
+                continue;
+            }
+            locationCodesEncountered.add(locationCode);
             storeLocationList.add(
                     new Location((int) dataRow.getCell(WORKSHEET_DEPOT_NAME_STORE_NUMBER_COLUMN).getNumericCellValue(),
                             "STORE",

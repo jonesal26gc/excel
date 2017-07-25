@@ -10,7 +10,8 @@ import java.io.Serializable;
                         " order by location_code asc"),
         @NamedQuery(name = "allStoreLocations",
                 query = "from location " +
-                        " where location_type_code = 'STORE'")})
+                        " where location_type_code = 'STORE'" +
+                        " order by location_code asc")})
 
 @Entity(name = "location")
 @Table(name = "LOCATION")
