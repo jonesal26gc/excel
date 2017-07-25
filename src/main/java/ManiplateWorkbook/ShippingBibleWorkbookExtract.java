@@ -9,12 +9,12 @@ public class ShippingBibleWorkbookExtract {
         ShippingBibleWorkbook shippingBibleWorkbook = new ShippingBibleWorkbook("Transport Bible.xlsx");
 
         // load the depot list.
-        DepotLocationList depotLocationList = shippingBibleWorkbook.buildDepotLocationList();
+        LocationList depotLocationList = shippingBibleWorkbook.buildDepotLocationList();
         System.out.println(depotLocationList.locations.size() + " depots were loaded.");
         //depotLocationList.display();
 
         // load the store list.
-        StoreLocationList storeLocationList = shippingBibleWorkbook.buildStoreLocationList();
+        LocationList storeLocationList = shippingBibleWorkbook.buildStoreLocationList();
         System.out.println(storeLocationList.locations.size() + " stores were loaded.");
         //storeLocationList.display();
 

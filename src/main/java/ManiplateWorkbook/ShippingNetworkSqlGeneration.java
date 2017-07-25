@@ -8,8 +8,8 @@ public class ShippingNetworkSqlGeneration {
     public static final String END_OF_LINE = "\n";
 
     public static void main(String[] args) throws Exception {
-        DepotLocationList depotLocationList;
-        StoreLocationList storeLocationList;
+        LocationList depotLocationList;
+        LocationList storeLocationList;
         RouteListsArray routeListsArray;
 
         File file = new File("ShippingNetworkInsertSQL.txt");
@@ -19,8 +19,8 @@ public class ShippingNetworkSqlGeneration {
         try {
             FileInputStream fileIn = new FileInputStream("ShippingBibleWorkbookExtract.ser");
             ObjectInputStream in = new ObjectInputStream(fileIn);
-            depotLocationList = (DepotLocationList) in.readObject();
-            storeLocationList = (StoreLocationList) in.readObject();
+            depotLocationList = (LocationList) in.readObject();
+            storeLocationList = (LocationList) in.readObject();
             routeListsArray = (RouteListsArray) in.readObject();
             in.close();
             fileIn.close();
@@ -40,13 +40,13 @@ public class ShippingNetworkSqlGeneration {
         System.out.println("SQL generation is complete.");
     }
 
-    private static void processStoreLocations(StoreLocationList storeLocationList, BufferedWriter bufferedWriter) {
+    private static void processStoreLocations(LocationList storeLocationList, BufferedWriter bufferedWriter) {
         for (Location location : storeLocationList.getLocations()) {
             createSQLforStoreLocation(bufferedWriter, location);
         }
     }
 
-    private static void processDepotLocations(DepotLocationList depotLocationList, BufferedWriter bufferedWriter) {
+    private static void processDepotLocations(LocationList depotLocationList, BufferedWriter bufferedWriter) {
         for (Location location : depotLocationList.getLocations()) {
             createSQLforDepotLocations(bufferedWriter, location);
         }

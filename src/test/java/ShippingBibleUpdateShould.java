@@ -1,4 +1,4 @@
-import ManiplateWorkbook.DepotLocationList;
+import ManiplateWorkbook.LocationList;
 import ManiplateWorkbook.Location;
 import ManiplateWorkbook.ShippingDatabaseConnectionForPostgres;
 import org.junit.Test;
@@ -13,7 +13,7 @@ public class ShippingBibleUpdateShould {
     @Test
     public void updateDepotLocations() {
 
-        DepotLocationList depotLocationList = new DepotLocationList();
+        LocationList depotLocationList = new LocationList();
         depotLocationList.add(new Location(1,"depot","depot 1","stream"));
 
         Queue<Location> queue = new LinkedList<Location>(depotLocationList.getLocations());

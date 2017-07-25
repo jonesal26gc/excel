@@ -127,8 +127,8 @@ public class ShippingBibleWorkbook {
         return depotNumberArrayList.toArray(new String[depotNumberArrayList.size()]);
     }
 
-    public DepotLocationList buildDepotLocationList() {
-        DepotLocationList depotLocationList = new DepotLocationList();
+    public LocationList buildDepotLocationList() {
+        LocationList depotLocationList = new LocationList();
         ArrayList<Integer> locationCodesEncountered = new ArrayList<Integer>();
         for (int rowNumber = WORKSHEET_DEPOT_CODES_DATA_ROW_START; rowNumber < depotCodesWorksheet.getLastRowNum(); rowNumber++) {
             XSSFRow dataRow = depotCodesWorksheet.getRow(rowNumber);
@@ -158,9 +158,9 @@ public class ShippingBibleWorkbook {
         return dataRow.getCell(WORKSHEET_DEPOT_CODES_STREAM_COLUMN).getStringCellValue();
     }
 
-    public StoreLocationList buildStoreLocationList() {
+    public LocationList buildStoreLocationList() {
         verifyLocationOfDepotNameTableData();
-        StoreLocationList storeLocationList = new StoreLocationList();
+        LocationList storeLocationList = new LocationList();
         ArrayList<Integer> locationCodesEncountered = new ArrayList<Integer>();
 
         for (int rowNumber = WORKSHEET_DEPOT_NAME_DATA_ROW_START; rowNumber < depotNameWorksheet.getLastRowNum(); rowNumber++) {

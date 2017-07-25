@@ -1,28 +1,20 @@
 package ManiplateWorkbook;
 
-import com.sun.tools.javac.file.Locations;
-import org.hibernate.Query;
-
 import java.io.*;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
 
 public class ShippingNetworkUpdate {
 
     public static void main(String[] args) throws Exception {
-        DepotLocationList depotLocationList;
-        StoreLocationList storeLocationList;
+        LocationList depotLocationList;
+        LocationList storeLocationList;
         RouteListsArray routeListsArray;
 
         try {
             FileInputStream fileIn = new FileInputStream("ShippingBibleWorkbookExtract.ser");
             ObjectInputStream in = new ObjectInputStream(fileIn);
-            depotLocationList = (DepotLocationList) in.readObject();
-            storeLocationList = (StoreLocationList) in.readObject();
+            depotLocationList = (LocationList) in.readObject();
+            storeLocationList = (LocationList) in.readObject();
             routeListsArray = (RouteListsArray) in.readObject();
             in.close();
             fileIn.close();
