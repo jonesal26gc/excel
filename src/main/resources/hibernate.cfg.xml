@@ -11,7 +11,7 @@
             org.postgresql.Driver
         </property>
         <property name="hibernate.connection.url">
-            jdbc:postgresql://localhost/shipping_network_3
+            jdbc:postgresql://localhost/shipping_network
         </property>
         <property name="hibernate.connection.username">
             postgres

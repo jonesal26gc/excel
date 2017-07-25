@@ -248,25 +248,33 @@ public class ShippingBibleWorkbook {
         if (targetDepotColumn == 0) {
             return null;
         }
+        ArrayList<Integer> locationCodesEncountered = new ArrayList<Integer>();
         RouteList routeList = new RouteList(Integer.parseInt(depotCrossReference.lookup(targetDepot.toUpperCase())[0]));
         for (int rowNumber = 1; rowNumber < depotNameWorksheet.getLastRowNum(); rowNumber++) {
             XSSFRow currentRow = depotNameWorksheet.getRow(rowNumber);
             if (currentRow == null | !isValidStoreNumber(currentRow)) {
                 break;
             }
+            int locationCode = (int) currentRow.getCell(WORKSHEET_DEPOT_NAME_STORE_NUMBER_COLUMN).getNumericCellValue();
             String[] depotList = depotCrossReference.lookup(currentRow.getCell(targetDepotColumn).getStringCellValue().toUpperCase());
             Set<RouteLeg> routeLegs = new LinkedHashSet<RouteLeg>();
             if (depotList == null) {
                 System.out.println("ERROR - Cannot find '" + currentRow.getCell(targetDepotColumn).getStringCellValue() + "' in the DC Cross-Reference.");
+                continue;
                 //throw new RuntimeException("ERROR - Cannot find '" + currentRow.getCell(targetDepotColumn).getStringCellValue() + "' in the DC Cross-Reference.");
 //                routeLegs.add(new RouteLeg(routeNumber,
 //                        legNumber,
 //                        routeList.getLocationCodeFrom(),
 //                        (int) currentRow.getCell(WORKSHEET_DEPOT_NAME_STORE_NUMBER_COLUMN).getNumericCellValue()));
             } else {
-                if (depotList.equals("000")) {
-                    break;
+                if (depotList[0].equals("000") | depotList[0].equals("")) {
+                    continue;
                 }
+                if (locationCodesEncountered.contains(locationCode)) {
+                    System.out.println("WARNING - Duplicated Location (Store) " + locationCode + " encountered when processing route.");
+                    continue;
+                }
+                locationCodesEncountered.add(locationCode);
                 int legNumber = 1;
                 int lastDepot = routeList.getLocationCodeFrom();
                 for (String depot : depotList) {
@@ -278,12 +286,12 @@ public class ShippingBibleWorkbook {
                 }
                 routeLegs.add(new RouteLeg(legNumber,
                         lastDepot,
-                        (int) currentRow.getCell(WORKSHEET_DEPOT_NAME_STORE_NUMBER_COLUMN).getNumericCellValue()));
+                        locationCode));
             }
             routeList.add(
                     new Route(0,
                             routeList.getLocationCodeFrom(),
-                            (int) currentRow.getCell(WORKSHEET_DEPOT_NAME_STORE_NUMBER_COLUMN).getNumericCellValue(),
+                            locationCode,
                             routeTypeCode,
                             routeLegs,
                             retrieveStoreBibleStartDate(currentRow),
@@ -292,7 +300,6 @@ public class ShippingBibleWorkbook {
         routeList.sort();
         return routeList;
     }
-
 
     private int findTargetDepotColumn(String targetDepot) {
         XSSFRow headingsRow = depotNameWorksheet.getRow(WORKSHEET_DEPOT_NAME_HEADER_ROW);

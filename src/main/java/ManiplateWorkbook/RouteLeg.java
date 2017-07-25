@@ -12,14 +12,24 @@ import java.io.Serializable;
 @Entity(name = "route_leg")
 @Table(name = "ROUTE_LEG")
 public class RouteLeg implements Serializable, Comparable {
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ROUTE_NUMBER", nullable = false)
-    private Route route;
+
     @Id
-    @Column(name = "LEG_NUMBER")
+    @Column(name = "leg_number")
+    @SequenceGenerator(
+            name = "LegNumberGenerator",              // name of this generator.
+            initialValue = 0,                         // starting value if the row is not already present.
+            allocationSize = 1,                       // increment.
+            sequenceName = "leg_number_sequence")    // name of the sequence.
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "LegNumberGenerator")
     private int legNumber;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "route_number", nullable = false)
+    private Route route;
+
     @Column(name = "location_code_from")
     private int locationCodeFrom;
+
     @Column(name = "location_code_to")
     private int locationCodeTo;
 
@@ -80,6 +90,6 @@ public class RouteLeg implements Serializable, Comparable {
     }
 
     public int compareTo(Object o) {
-        return this.legNumber - ((RouteLeg)o).legNumber;
+        return this.legNumber - ((RouteLeg) o).legNumber;
     }
 }

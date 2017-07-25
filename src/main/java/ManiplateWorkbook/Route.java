@@ -5,44 +5,49 @@ import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
 
 @NamedQueries({
         @NamedQuery(name = "firstTenRoutes",
                 query = "from route " +
-                        " where route_number between 1 and 10" +
-                        " order by route_number asc")})
+                        //" where route_number between 1 and 10" +
+                        " order by route_number asc"),
+        @NamedQuery(name = "allRoutes",
+                query = "from route ")})
 
 @Entity(name = "route")
 @Table(name = "ROUTE")
 public class Route implements Serializable, Comparable {
 
-    @TableGenerator(
-            name = "RouteNumberGenerator",      // name of this generator.
-            initialValue = 0,                   // starting value if the row is not already present.
-            allocationSize = 1,                 // increment.
-            table = "route_number_sequence",      // table name for sequences.
-            pkColumnName = "route_number_sequence",     // 'key' column name.
-            valueColumnName = "last_value",       // 'next value' column name.
-            pkColumnValue = "ROUTE_NUMBER")        // key value for this row.
+    @SequenceGenerator(
+            name = "RouteNumberGenerator",              // name of this generator.
+            initialValue = 0,                           // starting value if the row is not already present.
+            allocationSize = 1,                         // increment.
+            sequenceName = "route_number_sequence")     // name of the sequence.
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "RouteNumberGenerator")
     @Column(name = "route_number")
     private int route_number;
+
     @Column(name = "location_code_start")
     private int locationCodeStart;
+
     @Column(name = "location_code_end")
     private int locationCodeEnd;
+
     @Column(name = "route_type_code")
     private String routeTypeCode;
-    @OneToMany(mappedBy = "route", fetch = FetchType.EAGER)
+
+    @OneToMany(fetch = FetchType.EAGER)
     @Fetch(FetchMode.JOIN)
-    //@JoinColumns(@JoinColumn(name="route_number",referencedColumnName = "route_number"))
+    @JoinColumn(name = "route_number")
     private Set<RouteLeg> routeLegs;
+
     @Column(name = "start_date")
     private Date startDate;
+
     @Column(name = "end_date")
     private Date endDate;
 
