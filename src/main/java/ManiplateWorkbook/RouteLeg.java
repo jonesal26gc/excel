@@ -11,7 +11,7 @@ import java.io.Serializable;
 
 @Entity(name = "route_leg")
 @Table(name = "ROUTE_LEG")
-public class RouteLeg implements Serializable {
+public class RouteLeg implements Serializable, Comparable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ROUTE_NUMBER", nullable = false)
     private Route route;
@@ -77,5 +77,9 @@ public class RouteLeg implements Serializable {
         return (this.legNumber == routeLeg.legNumber
                 && this.locationCodeFrom == routeLeg.locationCodeFrom
                 && this.locationCodeTo == routeLeg.locationCodeTo);
+    }
+
+    public int compareTo(Object o) {
+        return this.legNumber - ((RouteLeg)o).legNumber;
     }
 }

@@ -5,6 +5,7 @@ import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
 
@@ -129,6 +130,7 @@ public class Route implements Serializable, Comparable {
                 && this.routeLegs.size() == route.routeLegs.size())) {
             return false;
         }
+        //Collections.sort(this.routeLegs);
         for (RouteLeg routeLeg : this.routeLegs) {
             if (!(routeLeg.routeLegMatch(routeLeg))) {
                 return false;
