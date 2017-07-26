@@ -38,7 +38,7 @@ public class RoutePathViewShould {
 
         Query namedQuery = hc.session.getNamedQuery("routePathToDestination");
         namedQuery.setParameter("routeTypeCode", "FRONT");
-        namedQuery.setParameter("locationCodeEnd",2055);
+        namedQuery.setParameter("locationCodeEnd",2007);
 
         @SuppressWarnings("unchecked")
         List<RoutePathView> routePathViews = namedQuery.list();

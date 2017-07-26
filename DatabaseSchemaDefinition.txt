@@ -6,6 +6,7 @@ SET SEARCH_PATH = PUBLIC, PG_CATALOG;
 create sequence
     route_number_sequence
         minvalue 0 maxvalue 2147483647;
+
 create sequence
      leg_number_sequence
          minvalue 0 maxvalue 2147483647;
