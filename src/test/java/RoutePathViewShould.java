@@ -1,4 +1,4 @@
-import ManiplateWorkbook.HibernateConnectionToShippingNetwork;
+import ManiplateWorkbook.DBConnectionToShippingNetworkViaHibernate;
 import ManiplateWorkbook.RoutePathView;
 import org.hibernate.Query;
 import org.junit.Test;
@@ -10,7 +10,7 @@ public class RoutePathViewShould {
     @Test
     public void
     selectRoutePathSourceToDestination(){
-        HibernateConnectionToShippingNetwork hc = new HibernateConnectionToShippingNetwork();
+        DBConnectionToShippingNetworkViaHibernate hc = new DBConnectionToShippingNetworkViaHibernate();
         hc.open();
         hc.startTransaction();
 
@@ -32,7 +32,7 @@ public class RoutePathViewShould {
     @Test
     public void
     selectRoutePathToDestination(){
-        HibernateConnectionToShippingNetwork hc = new HibernateConnectionToShippingNetwork();
+        DBConnectionToShippingNetworkViaHibernate hc = new DBConnectionToShippingNetworkViaHibernate();
         hc.open();
         hc.startTransaction();
 

@@ -5,19 +5,23 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 public class ShippingNetworkSqlGeneration {
+    public static final String SHIPPING_BIBLE_SERIALIZED_EXTRACT_FILENAME = "ShippingBibleSerializedExtract.ser";
+    public static final String SHIPPING_NETWORK_SQL_FILENAME = "ShippingNetworkSQL.txt";
     public static final String END_OF_LINE = "\n";
 
     public static void main(String[] args) throws Exception {
+        System.out.println("*** Transport Bible SQL creation for Shipping Network database update(s) ***");
+
         LocationList depotLocationList;
         LocationList storeLocationList;
         RouteListsArray routeListsArray;
 
-        File file = new File("ShippingNetworkInsertSQL.txt");
+        File file = new File(SHIPPING_NETWORK_SQL_FILENAME);
         FileWriter fileWriter = new FileWriter(file);
         BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 
         try {
-            FileInputStream fileIn = new FileInputStream("ShippingBibleWorkbookExtract.ser");
+            FileInputStream fileIn = new FileInputStream(SHIPPING_BIBLE_SERIALIZED_EXTRACT_FILENAME);
             ObjectInputStream in = new ObjectInputStream(fileIn);
             depotLocationList = (LocationList) in.readObject();
             storeLocationList = (LocationList) in.readObject();
@@ -26,18 +30,15 @@ public class ShippingNetworkSqlGeneration {
             fileIn.close();
         } catch (IOException i) {
             i.printStackTrace();
-            return;
+            throw new RuntimeException("ERROR - De-serialization of objects failed.");
         } catch (ClassNotFoundException c) {
-            System.out.println("De-serialization of objects failed.");
-            c.printStackTrace();
-            return;
+            throw new RuntimeException("ERROR - De-serialization of objects failed - unable to find class.");
         }
 
         processStoreLocations(storeLocationList, bufferedWriter);
         processDepotLocations(depotLocationList, bufferedWriter);
         processRoutes(routeListsArray, bufferedWriter);
-
-        System.out.println("SQL generation is complete.");
+        System.out.println("INFO - SQL generation is complete.");
     }
 
     private static void processStoreLocations(LocationList storeLocationList, BufferedWriter bufferedWriter) {

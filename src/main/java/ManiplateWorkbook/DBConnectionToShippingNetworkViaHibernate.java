@@ -6,7 +6,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 
-public class HibernateConnectionToShippingNetwork {
+public class DBConnectionToShippingNetworkViaHibernate {
     private SessionFactory sessionFactory;
     public Session session;
     private Transaction transaction;

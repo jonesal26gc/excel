@@ -1,11 +1,13 @@
 package ManiplateWorkbook;
 
 import org.hibernate.Query;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ShippingNetworkUpdate {
+    public static final String SHIPPING_BIBLE_SERIALIZED_EXTRACT_FILENAME = "ShippingBibleSerializedExtract.ser";
 
     public static void main(String[] args) throws Exception {
         LocationList depotLocationList;
@@ -13,7 +15,7 @@ public class ShippingNetworkUpdate {
         RouteListsArray routeListsArray;
 
         try {
-            FileInputStream fileIn = new FileInputStream("ShippingBibleWorkbookExtract.ser");
+            FileInputStream fileIn = new FileInputStream(SHIPPING_BIBLE_SERIALIZED_EXTRACT_FILENAME);
             ObjectInputStream in = new ObjectInputStream(fileIn);
             depotLocationList = (LocationList) in.readObject();
             storeLocationList = (LocationList) in.readObject();
@@ -22,88 +24,74 @@ public class ShippingNetworkUpdate {
             fileIn.close();
         } catch (IOException i) {
             i.printStackTrace();
-            return;
+            throw new RuntimeException("ERROR - De-serialization of objects failed.");
         } catch (ClassNotFoundException c) {
-            System.out.println("De-serialization of Shipping Network objects has failed.");
-            c.printStackTrace();
-            return;
+            throw new RuntimeException("ERROR - De-serialization of objects failed - unable to find class.");
         }
+        System.out.println("INFO - De-serialization of Shipping Network objects is complete.");
 
-        System.out.println("De-serialization of Shipping Network objects is complete.");
-        HibernateConnectionToShippingNetwork hc = new HibernateConnectionToShippingNetwork();
-        hc.open();
-        processLocations(hc, depotLocationList.getLocations());
-        processLocations(hc, storeLocationList.getLocations());
-        deleteExistingRoutes(hc);
+        DBConnectionToShippingNetworkViaHibernate dbc = new DBConnectionToShippingNetworkViaHibernate();
+        dbc.open();
+        processLocations(dbc, depotLocationList.getLocations());
+        processLocations(dbc, storeLocationList.getLocations());
+        deleteExistingRoutes(dbc);
         for (RouteList routeList : routeListsArray.getRouteLists()) {
-            processRouteList(hc, routeList);
+            processRouteList(dbc, routeList);
         }
-        hc.close();
-        System.out.println("Update(s) to the Shipping Network Database are complete.");
+        dbc.close();
+        System.out.println("INFO - Update(s) to the Shipping Network Database are complete.");
     }
 
-    private static void processLocations(HibernateConnectionToShippingNetwork hc, ArrayList<Location> locations) {
-        hc.startTransaction();
+    private static void processLocations(DBConnectionToShippingNetworkViaHibernate dbc, ArrayList<Location> locations) {
+        dbc.startTransaction();
         int transactionCount = 0;
         for (Location location : locations) {
             transactionCount++;
-            hc.session.saveOrUpdate(location);
+            dbc.session.saveOrUpdate(location);
         }
-        hc.endTransaction();
-        System.out.println(transactionCount + " updates for LOCATION table.");
+        dbc.endTransaction();
+        System.out.println("INFO - " + transactionCount + " updates for LOCATION table.");
     }
 
-    private static void deleteExistingRoutes(HibernateConnectionToShippingNetwork hc) {
-        hc.startTransaction();
+    private static void deleteExistingRoutes(DBConnectionToShippingNetworkViaHibernate dbc) {
+        dbc.startTransaction();
         int routeDeleteCount = 0;
-        int routeLegDeleteCount = 0;
 
-        Query deleteRoutes = hc.session.getNamedQuery("allRoutes");
-        List<Route> routesToDelete = deleteRoutes.list();
+        Query allRoutes = dbc.session.getNamedQuery("allRoutes");
+        @SuppressWarnings("unchecked")
+        List<Route> routesToDelete = allRoutes.list();
         for (Route route : routesToDelete) {
-            int result = hc.session.getNamedQuery("deleteRoute")
-                    .setInteger("routeNumber", route.getRoute_number())
-                    .executeUpdate();
-//            System.out.println("route legs");
-//            for (RouteLeg routeLeg: route.getRouteLegs()){
-//                System.out.println(routeLeg.toString());
-//                hc.session.delete(routeLeg);
-//                routeLegDeleteCount++;
-//            }
-//            hc.session.delete(route);
-            routeDeleteCount++;
-//        hc.session.getTransaction().commit();
+            Query deleteRoute = dbc.session.getNamedQuery("deleteRoute");
+            deleteRoute.setParameter("routeNumber", route.getRoute_number());
+            if (deleteRoute.executeUpdate() > 0) {
+                routeDeleteCount++;
+            }
         }
-        System.out.println(routeDeleteCount + " rows were deleted");
-        System.out.println(routeLegDeleteCount + " rows were deleted");
-        hc.endTransaction();
+        System.out.println("INFO - " + routeDeleteCount + " rows were deleted");
+        dbc.endTransaction();
     }
 
-    private static void processRouteList(HibernateConnectionToShippingNetwork hc, RouteList routeList) {
-        System.out.println("processing route");
+    private static void processRouteList(DBConnectionToShippingNetworkViaHibernate dbc, RouteList routeList) {
         int transactionCount = 0;
-        hc.startTransaction();
+        dbc.startTransaction();
         for (Route route : routeList.getRoutes()) {
             transactionCount++;
-            processRoute(hc, route);
+            processRoute(dbc, route);
         }
-        //hc.session.getTransaction().commit();
-        hc.endTransaction();
-        System.out.println(transactionCount + " updates for ROUTE table.");
+        dbc.endTransaction();
+        System.out.println("INFO - " + transactionCount + " updates for ROUTE table.");
     }
 
-    private static void processRoute(HibernateConnectionToShippingNetwork hc, Route route) {
+    private static void processRoute(DBConnectionToShippingNetworkViaHibernate dbc, Route route) {
         try {
-            hc.session.save(route);
-            System.out.println(route.toString());
+            dbc.session.save(route);
             for (RouteLeg routeLeg : route.getRouteLegs()) {
                 routeLeg.setLegNumber(0);
                 routeLeg.setRoute(route);
-                hc.session.save(routeLeg);
-                System.out.println(">" + routeLeg.toString());
+                dbc.session.save(routeLeg);
             }
         } catch (Exception ex) {
-            System.out.println("Warning - " + ex.getMessage());
+            throw  new RuntimeException("ERROR - " + ex.getMessage());
         }
     }
 }

@@ -1,4 +1,4 @@
-import ManiplateWorkbook.HibernateConnectionToShippingNetwork;
+import ManiplateWorkbook.DBConnectionToShippingNetworkViaHibernate;
 import ManiplateWorkbook.Location;
 import ManiplateWorkbook.Route;
 import ManiplateWorkbook.RouteLeg;
@@ -9,12 +9,12 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
-public class HibernateConnectionToShippingNetworkShould {
+public class DBConnectionToShippingNetworkViaHibernateShould {
 
     @Test
     public void
     connect_successfully() {
-        HibernateConnectionToShippingNetwork hc = new HibernateConnectionToShippingNetwork();
+        DBConnectionToShippingNetworkViaHibernate hc = new DBConnectionToShippingNetworkViaHibernate();
 
         hc.open();
         hc.startTransaction();
@@ -32,12 +32,13 @@ public class HibernateConnectionToShippingNetworkShould {
     @Test
     public void
     getTheFirstTenRoutes() {
-        HibernateConnectionToShippingNetwork hc = new HibernateConnectionToShippingNetwork();
+        DBConnectionToShippingNetworkViaHibernate hc = new DBConnectionToShippingNetworkViaHibernate();
 
         hc.open();
         hc.startTransaction();
 
         Query namedQuery = hc.session.getNamedQuery("firstTenRoutes");
+        @SuppressWarnings("unchecked")
         List<Route> firstTenRoutes = namedQuery.list();
         for (Route route : firstTenRoutes) {
             System.out.println(route.getRoute_number() + " = " + route.getLocationCodeStart() + " to " + route.getLocationCodeEnd());
@@ -64,7 +65,7 @@ public class HibernateConnectionToShippingNetworkShould {
     @Test
     public void
     getNextRouteNumber() {
-        HibernateConnectionToShippingNetwork hc = new HibernateConnectionToShippingNetwork();
+        DBConnectionToShippingNetworkViaHibernate hc = new DBConnectionToShippingNetworkViaHibernate();
 
         hc.open();
         hc.startTransaction();
@@ -79,7 +80,7 @@ public class HibernateConnectionToShippingNetworkShould {
     @Test
     public void
     insertRoute() {
-        HibernateConnectionToShippingNetwork hc = new HibernateConnectionToShippingNetwork();
+        DBConnectionToShippingNetworkViaHibernate hc = new DBConnectionToShippingNetworkViaHibernate();
 
         hc.open();
         hc.startTransaction();

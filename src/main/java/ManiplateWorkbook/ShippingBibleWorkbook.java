@@ -6,6 +6,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class ShippingBibleWorkbook {
@@ -65,9 +67,6 @@ public class ShippingBibleWorkbook {
         }
         retrieveEffectiveDatesFromDepotNameWorksheet();
         buildDepotCrossReference();
-        depotCrossReference.display();
-        System.out.println("Bible Start Date is :" + startDate);
-        System.out.println("Bible End Date is   :" + endDate);
     }
 
     public void retrieveEffectiveDatesFromDepotNameWorksheet() {
@@ -78,6 +77,8 @@ public class ShippingBibleWorkbook {
         } catch (Exception ex) {
             throw new RuntimeException("ERROR - Unable to establish the Bible Start/End date(s).");
         }
+        DateFormat isoDate = new SimpleDateFormat("yyyy-MM-dd");
+        System.out.println("INFO - Bible Effective Dates are " + isoDate.format(startDate) + " to " + isoDate.format(endDate) + ".");
     }
 
     public void buildDepotCrossReference() {
@@ -91,7 +92,7 @@ public class ShippingBibleWorkbook {
             String concatenatedDepotNumbers = retrieveConcatenatedDepotNumbers(dataRow);
             depotCrossReference.add(depotName.toUpperCase(), buildDepotNumberArray(concatenatedDepotNumbers));
         }
-        System.out.println(depotCrossReference.displayCount() + " depots were loaded to the cross-reference.");
+        System.out.println("INFO - " + depotCrossReference.displayCount() + " entries were loaded to the Depot Cross-Reference table.");
     }
 
     private void verifyLocationOfDepotCodesTableData() {
@@ -248,8 +249,10 @@ public class ShippingBibleWorkbook {
         if (targetDepotColumn == 0) {
             return null;
         }
+        RouteList routeList = new RouteList(Integer.parseInt(depotCrossReference.lookup(targetDepot.toUpperCase())[0]),
+                targetDepot,
+                routeTypeCode);
         ArrayList<Integer> locationCodesEncountered = new ArrayList<Integer>();
-        RouteList routeList = new RouteList(Integer.parseInt(depotCrossReference.lookup(targetDepot.toUpperCase())[0]));
         for (int rowNumber = 1; rowNumber < depotNameWorksheet.getLastRowNum(); rowNumber++) {
             XSSFRow currentRow = depotNameWorksheet.getRow(rowNumber);
             if (currentRow == null | !isValidStoreNumber(currentRow)) {
@@ -259,13 +262,8 @@ public class ShippingBibleWorkbook {
             String[] depotList = depotCrossReference.lookup(currentRow.getCell(targetDepotColumn).getStringCellValue().toUpperCase());
             Set<RouteLeg> routeLegs = new LinkedHashSet<RouteLeg>();
             if (depotList == null) {
-                System.out.println("ERROR - Cannot find '" + currentRow.getCell(targetDepotColumn).getStringCellValue() + "' in the DC Cross-Reference.");
+                System.out.println("WARNING - Cannot find '" + currentRow.getCell(targetDepotColumn).getStringCellValue() + "' in the DC Cross-Reference.");
                 continue;
-                //throw new RuntimeException("ERROR - Cannot find '" + currentRow.getCell(targetDepotColumn).getStringCellValue() + "' in the DC Cross-Reference.");
-//                routeLegs.add(new RouteLeg(routeNumber,
-//                        legNumber,
-//                        routeList.getLocationCodeFrom(),
-//                        (int) currentRow.getCell(WORKSHEET_DEPOT_NAME_STORE_NUMBER_COLUMN).getNumericCellValue()));
             } else {
                 if (depotList[0].equals("000") | depotList[0].equals("")) {
                     continue;
