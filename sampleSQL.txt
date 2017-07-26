@@ -1,13 +1,74 @@
-﻿﻿select *
-  from route r
-     , route_leg rl
-     , location f
-     , location t
- where rl.route_number = r.route_number
-   and r.location_code_end = 2011
-   and r.route_type_code = 'FRONT'
-   and r.start_date <= '2017-03-21'
-   and r.end_date   >= '2017-03-21'
-   and f.location_code = rl.location_code_from
-   and t.location_code = rl.location_code_to
-   ;
+﻿-- select the routes to from origin to destination.
+
+    select rl.route_number
+        , r.route_type_code
+        , r.start_date
+        , r.end_date
+        , rl.leg_number
+        , rl.location_code_from
+        , lf.name as location_from_name
+        , lf.location_type_code as location_from_type_code
+        , lf.format as location_from_format
+        , rl.location_code_to
+        , lt.name as location_to_name
+        , lt.location_type_code as location_to_type_code
+        , lt.format as location_to_format
+     from route r
+        , route_leg rl
+        , location lf
+        , location lt
+    where r.route_type_code      = 'FRONT'
+      and r.location_code_start  = 460
+      and r.location_code_end    = 2055
+      and r.start_date          <= '2017-03-21'
+      and r.end_date            >= '2017-03-21'
+      and rl.route_number        = r.route_number
+      and lf.location_code       = rl.location_code_from
+      and lt.location_code       = rl.location_code_to
+    order by rl.leg_number asc
+      ;
+
+create or replace view route_path_view
+( route_number
+, route_type_code
+, location_code_start
+, location_code_end
+, start_date
+, end_date
+, leg_number
+, location_code_from
+, location_from_name
+, location_from_type_code
+, location_from_format
+, location_code_to
+, location_to_name
+, location_to_type_code
+, location_to_format
+)
+as
+    select rl.route_number
+        , r.route_type_code
+        , r.location_code_start
+        , r.location_code_end
+        , r.start_date
+        , r.end_date
+        , rl.leg_number
+        , rl.location_code_from
+        , lf.name
+        , lf.location_type_code
+        , lf.format
+        , rl.location_code_to
+        , lt.name
+        , lt.location_type_code
+        , lt.format
+     from route r
+        , route_leg rl
+        , location lf
+        , location lt
+    where rl.route_number        = r.route_number
+      and lf.location_code       = rl.location_code_from
+      and lt.location_code       = rl.location_code_to
+    order by rl.leg_number
+      ;
+
+

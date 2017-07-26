@@ -11,7 +11,7 @@ import java.util.Set;
 @NamedQueries({
         @NamedQuery(name = "firstTenRoutes",
                 query = "from route " +
-                        //" where route_number between 1 and 10" +
+                        " where route_number between 1 and 10" +
                         " order by route_number asc"),
         @NamedQuery(name = "allRoutes",
                 query = "from route ")})
@@ -40,7 +40,7 @@ public class Route implements Serializable, Comparable {
     @Column(name = "route_type_code")
     private String routeTypeCode;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.REMOVE)
     @Fetch(FetchMode.JOIN)
     @JoinColumn(name = "route_number")
     private Set<RouteLeg> routeLegs;

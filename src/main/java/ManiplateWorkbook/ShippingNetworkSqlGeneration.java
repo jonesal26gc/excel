@@ -65,6 +65,10 @@ public class ShippingNetworkSqlGeneration {
                     legNumber++;
                     createSQLforRouteLeg(bufferedWriter, route.getRoute_number(), routeLeg, legNumber);
                 }
+                // For testing purposes, limit the processing.
+                if (routeNumber >= 10) {
+                    break;
+                }
             }
         }
     }

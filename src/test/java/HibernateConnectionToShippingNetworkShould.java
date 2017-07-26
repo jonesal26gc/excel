@@ -46,14 +46,14 @@ public class HibernateConnectionToShippingNetworkShould {
                 System.out.println(routeLeg.toString());
             }
 
-            Query namedQuery2 = hc.session.getNamedQuery("allRouteLegs");
-            //namedQuery2.setParameter(0,route.getRoute_number());
-            namedQuery2.setParameter("routeNumber", route.getRoute_number());
-            List<RouteLeg> allRouteLegs = namedQuery2.list();
-            System.out.println("There are " + allRouteLegs.size() + " legs in this route.");
-            for (RouteLeg routeLeg : allRouteLegs) {
-                System.out.println(routeLeg.toString());
-            }
+//            Query namedQuery2 = hc.session.getNamedQuery("allRouteLegs");
+//            //namedQuery2.setParameter(0,route.getRoute_number());
+//            namedQuery2.setParameter("routeNumber", route.getRoute_number());
+//            List<RouteLeg> allRouteLegs = namedQuery2.list();
+//            System.out.println("There are " + allRouteLegs.size() + " legs in this route.");
+//            for (RouteLeg routeLeg : allRouteLegs) {
+//                System.out.println(routeLeg.toString());
+//            }
 
         }
 

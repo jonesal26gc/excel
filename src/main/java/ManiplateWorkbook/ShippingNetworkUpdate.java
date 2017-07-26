@@ -49,7 +49,6 @@ public class ShippingNetworkUpdate {
             transactionCount++;
             hc.session.saveOrUpdate(location);
         }
-        //hc.session.getTransaction().commit();
         hc.endTransaction();
         System.out.println(transactionCount + " updates for LOCATION table.");
     }
@@ -62,15 +61,15 @@ public class ShippingNetworkUpdate {
         Query deleteRoutes = hc.session.getNamedQuery("allRoutes");
         List<Route> routesToDelete = deleteRoutes.list();
         for (Route route : routesToDelete) {
-            Query deleteRouteLegs = hc.session.getNamedQuery("allRouteLegs");
-            deleteRouteLegs.setParameter("routeNumber", route.getRoute_number());
-            List<RouteLeg> routeLegsToDelete = deleteRouteLegs.list();
-            for (RouteLeg routeLeg : routeLegsToDelete) {
-                hc.session.delete(routeLeg);
-                routeLegDeleteCount++;
-            }
+//            System.out.println("route legs");
+//            for (RouteLeg routeLeg: route.getRouteLegs()){
+//                System.out.println(routeLeg.toString());
+//                hc.session.delete(routeLeg);
+//                routeLegDeleteCount++;
+//            }
             hc.session.delete(route);
             routeDeleteCount++;
+//        hc.session.getTransaction().commit();
         }
         System.out.println(routeDeleteCount + " rows were deleted");
         System.out.println(routeLegDeleteCount + " rows were deleted");
@@ -78,6 +77,7 @@ public class ShippingNetworkUpdate {
     }
 
     private static void processRouteList(HibernateConnectionToShippingNetwork hc, RouteList routeList) {
+        System.out.println("processing route");
         int transactionCount = 0;
         hc.startTransaction();
         for (Route route : routeList.getRoutes()) {

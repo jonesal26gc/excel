@@ -17,6 +17,7 @@ public class HibernateConnectionToShippingNetwork {
                 .addAnnotatedClass(Location.class)
                 .addAnnotatedClass(Route.class)
                 .addAnnotatedClass(RouteLeg.class)
+                .addAnnotatedClass(RoutePathView.class)
                 .buildSessionFactory();
         session = sessionFactory.openSession();
     }
