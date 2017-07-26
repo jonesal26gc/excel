@@ -1,36 +1,29 @@
 package ManiplateWorkbook;
 
+import org.hibernate.annotations.Immutable;
 import javax.persistence.*;
 import java.util.Date;
 
 @Entity(name = "RoutePathView")
-@Table(name = "ROUTE_PATH_VIEW")
-@NamedNativeQueries({
-        @NamedNativeQuery(name = "routePathSourceToDestination",
-                query = "select " +
-                        "  route_number" +
-                        ", route_type_code" +
-                        ", location_code_start" +
-                        ", location_code_end" +
-                        ", start_date" +
-                        ", end_date" +
-                        ", leg_number" +
-                        ", location_code_from" +
-                        ", location_from_name" +
-                        ", location_from_type_code" +
-                        ", location_from_format" +
-                        ", location_code_to" +
-                        ", location_to_name" +
-                        ", location_to_type_code" +
-                        ", location_to_format" +
-                        " from route_path_view" +
+@Table(name = "route_path_view")
+
+@NamedQueries({
+        @NamedQuery(name = "routePathSourceToDestination",
+                query = "from RoutePathView" +
                         " where route_type_code     = :routeTypeCode" +
                         "   and location_code_start = :locationCodeStart" +
                         "   and location_code_end   = :locationCodeEnd" +
                         " order by route_number asc" +
-                        "        , leg_number asc"
-        )})
+                        "        , leg_number asc"),
+        @NamedQuery(name = "routePathToDestination",
+                query = "from RoutePathView" +
+                        " where route_type_code     = :routeTypeCode" +
+                        "   and location_code_end   = :locationCodeEnd" +
+                        " order by route_number asc" +
+                        "        , leg_number asc")
+})
 
+@Immutable
 public class RoutePathView {
     @Column(name = "route_number", insertable = false, updatable = false)
     private int routeNumber;
@@ -63,6 +56,9 @@ public class RoutePathView {
     private String locationToTypeCode;
     @Column(name = "location_to_format", insertable = false, updatable = false)
     private String locationToFormat;
+
+    public RoutePathView() {
+    }
 
     public RoutePathView(int routeNumber, String routeTypeCode, int locationCodeStart, int locationCodeEnd, Date startDate, Date endDate, int legNumber, int locationCodeFrom, String locationFromName, String locationFromTypeCode, String locationFromFormat, int locationCodeTo, String locationToName, String locationToTypeCode, String locationToFormat) {
         this.routeNumber = routeNumber;

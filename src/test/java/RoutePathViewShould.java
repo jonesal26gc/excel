@@ -9,7 +9,7 @@ public class RoutePathViewShould {
 
     @Test
     public void
-    selectRouteOne(){
+    selectRoutePathSourceToDestination(){
         HibernateConnectionToShippingNetwork hc = new HibernateConnectionToShippingNetwork();
         hc.open();
         hc.startTransaction();
@@ -18,8 +18,29 @@ public class RoutePathViewShould {
         namedQuery.setParameter("routeTypeCode", "FRONT");
         namedQuery.setParameter("locationCodeStart",460);
         namedQuery.setParameter("locationCodeEnd",2055);
-        System.out.println("running");
-        System.out.println(namedQuery.list().toString());
+
+        @SuppressWarnings("unchecked")
+        List<RoutePathView> routePathViews = namedQuery.list();
+        for (RoutePathView routePathView : routePathViews) {
+            System.out.println(routePathView.toString());
+        }
+
+        hc.endTransaction();
+        hc.close();
+    }
+
+    @Test
+    public void
+    selectRoutePathToDestination(){
+        HibernateConnectionToShippingNetwork hc = new HibernateConnectionToShippingNetwork();
+        hc.open();
+        hc.startTransaction();
+
+        Query namedQuery = hc.session.getNamedQuery("routePathToDestination");
+        namedQuery.setParameter("routeTypeCode", "FRONT");
+        namedQuery.setParameter("locationCodeEnd",2055);
+
+        @SuppressWarnings("unchecked")
         List<RoutePathView> routePathViews = namedQuery.list();
         for (RoutePathView routePathView : routePathViews) {
             System.out.println(routePathView.toString());

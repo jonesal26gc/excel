@@ -21,7 +21,7 @@
         </property>
         <!--hibernate.cfg.xml -->
         <property name="show_sql">
-            true
+            false
         </property>
     </session-factory>
 </hibernate-configuration>

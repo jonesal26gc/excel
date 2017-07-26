@@ -1,7 +1,9 @@
 ﻿-- select the routes to from origin to destination.
 
-    select rl.route_number
+    select r.route_number
         , r.route_type_code
+        , r.location_code_start
+        , r.location_code_end
         , r.start_date
         , r.end_date
         , rl.leg_number
@@ -46,7 +48,7 @@ create or replace view route_path_view
 , location_to_format
 )
 as
-    select rl.route_number
+    select l.route_number
         , r.route_type_code
         , r.location_code_start
         , r.location_code_end

@@ -67,4 +67,49 @@ CREATE UNIQUE INDEX ROUTE_LEG_SK ON ROUTE_LEG
     (ROUTE_NUMBER,
      LEG_NUMBER);
 
+create or replace view route_path_view
+( route_number
+, route_type_code
+, location_code_start
+, location_code_end
+, start_date
+, end_date
+, leg_number
+, location_code_from
+, location_from_name
+, location_from_type_code
+, location_from_format
+, location_code_to
+, location_to_name
+, location_to_type_code
+, location_to_format
+)
+as
+    select l.route_number
+        , r.route_type_code
+        , r.location_code_start
+        , r.location_code_end
+        , r.start_date
+        , r.end_date
+        , rl.leg_number
+        , rl.location_code_from
+        , lf.name
+        , lf.location_type_code
+        , lf.format
+        , rl.location_code_to
+        , lt.name
+        , lt.location_type_code
+        , lt.format
+     from route r
+        , route_leg rl
+        , location lf
+        , location lt
+    where rl.route_number        = r.route_number
+      and lf.location_code       = rl.location_code_from
+      and lt.location_code       = rl.location_code_to
+    order by rl.leg_number
+      ;
+
+      ALTER VIEW route_path_view
+          OWNER TO POSTGRES;
 
