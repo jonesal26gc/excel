@@ -61,13 +61,16 @@ public class ShippingNetworkUpdate {
         Query deleteRoutes = hc.session.getNamedQuery("allRoutes");
         List<Route> routesToDelete = deleteRoutes.list();
         for (Route route : routesToDelete) {
+            int result = hc.session.getNamedQuery("deleteRoute")
+                    .setInteger("routeNumber", route.getRoute_number())
+                    .executeUpdate();
 //            System.out.println("route legs");
 //            for (RouteLeg routeLeg: route.getRouteLegs()){
 //                System.out.println(routeLeg.toString());
 //                hc.session.delete(routeLeg);
 //                routeLegDeleteCount++;
 //            }
-            hc.session.delete(route);
+//            hc.session.delete(route);
             routeDeleteCount++;
 //        hc.session.getTransaction().commit();
         }

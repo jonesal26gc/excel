@@ -16,6 +16,10 @@ import java.util.Set;
         @NamedQuery(name = "allRoutes",
                 query = "from route ")})
 
+@NamedNativeQueries({@NamedNativeQuery(name = "deleteRoute",
+        query = "DELETE FROM ROUTE" +
+                " where route_number = :routeNumber")})
+
 @Entity(name = "route")
 @Table(name = "ROUTE")
 public class Route implements Serializable, Comparable {
@@ -40,7 +44,7 @@ public class Route implements Serializable, Comparable {
     @Column(name = "route_type_code")
     private String routeTypeCode;
 
-    @OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.REMOVE)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @Fetch(FetchMode.JOIN)
     @JoinColumn(name = "route_number")
     private Set<RouteLeg> routeLegs;
